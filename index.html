@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Musée Virtuel — Accueil (Galerie Classique)</title>
+
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="museum-canvas"></canvas>
+
+  <div class="hint">
+    <div class="title">Musée immersif — Entrée</div>
+    <div class="sub">Clique sur la porte pour commencer le parcours →</div>
+  </div>
+
+  <div class="credits">Prototype — Salle d'accueil</div>
+
+  <!-- three r0.146.0 UMD + OrbitControls (compatible file://) -->
+  <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- script principal -->
+  <script src="script.js"></script>
+</body>
+</html>

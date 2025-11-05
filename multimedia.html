@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Conférence — Multimédia</title>
+  <link rel="stylesheet" href="multimedia.css" />
+</head>
+<body>
+  <header class="hud">
+    <div class="card">
+      <h3>Conférence — Multimédia</h3>
+      <p>Utilise les flèches ← / → pour changer la vidéo — Espace pour pause/lecture</p>
+    </div>
+    <div class="actions">
+      <button id="btn-home">Accueil</button>
+      <button id="btn-chrono">Chronologie</button>
+    </div>
+  </header>
+
+  <main class="cinema-wrap">
+    <section class="player-area">
+      <div class="player-card">
+        <!-- video element -->
+        <div class="video-stage">
+          <button class="nav prev" id="prevBtn" aria-label="Précédent">‹</button>
+          <video id="player" preload="metadata" controls playsinline>
+            <!-- src set by JS -->
+            Votre navigateur ne supporte pas <code>video</code>.
+          </video>
+          <button class="nav next" id="nextBtn" aria-label="Suivant">›</button>
+        </div>
+
+        <!-- thumbnail strip -->
+        <div class="thumbs" id="thumbs"></div>
+
+        <!-- minimal transport -->
+        <div class="transport">
+          <button id="playToggle" class="icon">▶</button>
+          <div id="time">0:00</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="info-side">
+      <div class="poster" id="posterWrap">
+        <img id="posterImg" alt="Aperçu vidéo" />
+      </div>
+      <div class="meta">
+        <h2 id="metaTitle">Titre</h2>
+        <p id="metaDesc">Description courte...</p>
+        <div class="meta-actions">
+          <button id="openGallery">Voir la galerie</button>
+          <button id="gotoChrono">Aller à la chronologie</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="multimedia.js"></script>
+</body>
+</html>

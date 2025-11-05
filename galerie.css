@@ -1,0 +1,32 @@
+/* galerie.css - mur de tableaux (Three.js canvas + overlay) */
+
+html,body { height:100%; margin:0; font-family: "Segoe UI", Roboto, Arial, sans-serif; background:#efe9e0; }
+#gallery-canvas { display:block; width:100vw; height:100vh; outline:none; }
+
+/* HUD */
+#hud { position:fixed; left:18px; top:14px; z-index:40; display:flex; gap:12px; align-items:center; pointer-events:auto; }
+.card { background:rgba(255,255,255,0.98); padding:12px 14px; border-radius:10px; box-shadow:0 10px 22px rgba(0,0,0,0.12); max-width:380px; color:#111; }
+.card h3 { margin:0 0 6px 0; font-size:15px; } .card p{ margin:0; font-size:12px; color:#333; }
+#mini-actions { display:flex; gap:8px }
+#mini-actions button { background:#222; color:#fff; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; }
+#mini-actions button:hover { transform:translateY(-2px) }
+
+/* overlay panel (fiche) */
+#panel { position:fixed; inset:0; display:none; justify-content:center; align-items:center; z-index:70; background:rgba(0,0,0,0.45); padding:20px; pointer-events:auto; }
+#panel[aria-hidden="false"]{ display:flex; }
+#panel-body { width:min(1100px,96%); max-height:90vh; background:#fff; border-radius:12px; overflow:hidden; display:grid; grid-template-columns:1fr 360px; box-shadow:0 24px 48px rgba(0,0,0,0.5); }
+#panel-image-wrap{ background:#eee; display:flex; align-items:center; justify-content:center; padding:18px }
+#panel-image{ max-width:100%; max-height:82vh; object-fit:contain; border-radius:4px; }
+#panel-meta{ padding:18px; overflow:auto } #panel-meta h2{ margin:0 0 8px 0; font-family:Georgia,serif }
+#panel-links{ margin-top:16px; display:flex; flex-direction:column; gap:8px }
+#panel-links button{ background:#222; color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; text-align:left }
+#panel-close{ position:absolute; right:20px; top:20px; background:transparent; border:none; font-size:22px; color:#fff; z-index:72; cursor:pointer; }
+
+/* pointer style applied via JS */
+body.cursor-pointer { cursor:pointer; }
+
+/* responsive */
+@media (max-width:900px){
+  #panel-body{ grid-template-columns:1fr; }
+  #panel-image{ max-height:60vh; }
+}

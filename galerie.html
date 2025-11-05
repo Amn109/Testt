@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Musée — Galerie (Mur de tableaux)</title>
+
+  <link rel="stylesheet" href="galerie.css" />
+
+  <!-- three r0.146 + OrbitControls + gsap (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <canvas id="gallery-canvas" tabindex="0"></canvas>
+
+  <div id="hud">
+    <div class="card">
+      <h3>Galerie — Mur d'exposition</h3>
+      <p>Un mur plein de tableaux : clique dessus pour agrandir. Clique sur la porte pour continuer.</p>
+    </div>
+    <div id="mini-actions">
+      <button id="btn-accueil">Accueil</button>
+      <button id="btn-chronologie">Chronologie</button>
+    </div>
+  </div>
+
+  <!-- overlay fiche -->
+  <div id="panel" aria-hidden="true">
+    <button id="panel-close" title="Fermer">✕</button>
+    <div id="panel-body">
+      <div id="panel-image-wrap">
+        <img id="panel-image" alt="Œuvre" />
+      </div>
+      <div id="panel-meta">
+        <h2 id="panel-title">Titre</h2>
+        <p id="panel-desc">Description rapide...</p>
+        <div id="panel-links">
+          <button data-target="chronologie.html">Voir la chronologie</button>
+          <button data-target="archives.html">Consulter les archives</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="galerie.js"></script>
+</body>
+</html>

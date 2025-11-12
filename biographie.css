@@ -1,0 +1,25 @@
+/* simple theme matching ton musée (sombre, sobre) */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#060405;color:#fff;font-family:Inter,system-ui,Arial}
+.topbar{position:fixed;left:0;right:0;top:0;height:56px;background:linear-gradient(180deg,#121010,#0b0a0a);display:flex;align-items:center;z-index:40;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+.nav-inner{width:1200px;margin:0 auto;display:flex;justify-content:flex-end;gap:12px;padding-right:18px}
+.nav-btn{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.04)}
+
+#scene-canvas{position:fixed;inset:56px 0 0 0;display:block;width:100%;height:calc(100% - 56px);background:#060405}
+
+/* overlay biographie */
+.bio-overlay{position:fixed;left:0;right:0;bottom:18px;display:flex;justify-content:center;pointer-events:none;z-index:90}
+.bio-overlay.show{pointer-events:auto}
+.bio-card{width:min(1100px,94%);background:linear-gradient(180deg,#121212,#0e0e0e);border-radius:10px;padding:18px 20px;box-shadow:0 30px 80px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.04);opacity:0.98}
+.bio-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.bio-head h2{margin:0;color:#f6d19b;font-family:"Playfair Display", Georgia, serif}
+.subtitle{font-size:13px;color:#cfc9c0;opacity:0.9}
+.bio-text{background:transparent;color:#e6e0d9;line-height:1.55;padding:6px 0;max-height:340px;overflow:auto;border-top:1px solid rgba(255,255,255,0.02);padding-top:14px}
+
+/* controls small */
+.bio-controls button{margin-left:6px;background:#262626;color:#fff;border-radius:6px;border:0;padding:8px 10px;cursor:pointer}
+.bio-controls .close{background:#b84b42}
+@media (max-width:900px){
+  .bio-card{padding:14px}
+  .bio-text{max-height:220px}
+}

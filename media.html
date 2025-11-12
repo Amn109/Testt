@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThéâtreVirtuel — Page Média</title>
+  <link rel="stylesheet" href="media.css">
+</head>
+<body>
+  <nav class="topbar">
+    <div class="nav-inner">
+      <a class="nav-btn" href="index.html">Accueil</a>
+      <a class="nav-btn" href="archives.html">Archives</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="theater" aria-label="Théâtre virtuel">
+      <div class="stage" id="stage">
+        <div class="proscenium"></div>
+
+        <!-- zone vidéo principale -->
+        <div class="screen-area" id="screenArea" aria-hidden="false">
+          <video id="player" playsinline preload="metadata"></video>
+          <div class="stage-ledge"></div>
+
+          <!-- overlay de fallback quand autoplay audio est bloqué -->
+          <div id="playOverlay" class="play-overlay" aria-hidden="true">
+            <div class="overlay-card">
+              <p>Le son n'a pas pu démarrer automatiquement.</p>
+              <button id="overlayPlayBtn">Cliquer pour activer le son et lancer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- rideaux -->
+        <div class="curtain left" id="curtainLeft" aria-hidden="false"></div>
+        <div class="curtain right" id="curtainRight" aria-hidden="false"></div>
+      </div>
+
+      <!-- TIMELINE : barre de progression (au-dessus des vignettes) -->
+      <div class="timeline-wrap" id="timelineWrap" aria-label="Barre de progression média">
+        <span id="curTimeBar" class="time-label">0:00</span>
+        <div class="timeline-area">
+          <div class="buffered" id="bufferedBar"></div>
+          <input id="seek" class="seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Position de lecture">
+        </div>
+        <span id="durTimeBar" class="time-label">0:00</span>
+      </div>
+
+      <!-- Vignettes / thumbnails -->
+      <div class="thumbs-wrap" id="thumbsWrap" aria-label="Sélecteur de vidéos">
+        <!-- vignettes injectées par JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- contrôle audio, play/pause & fullscreen (bas droite) -->
+  <div class="audio-controls" id="audioControls" aria-hidden="false" title="Contrôles audio et affichage">
+    <button id="playPauseBtn" class="playPause-btn" aria-label="Lecture / Pause">▶</button>
+    <button id="audioIcon" class="audio-icon" aria-hidden="false">🔊</button>
+    <input id="volControl" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+    <button id="fsBtn" class="fs-btn" aria-label="Plein écran" title="Plein écran">⛶</button>
+  </div>
+
+  <script src="media.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chronologie interactive — Musée Louis Lareng</title>
+  <link rel="stylesheet" href="chronologie.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a href="index.html">Accueil</a>
+      <a href="media.html">Media</a>
+    </nav>
+  </header>
+
+  <main class="stage">
+    <h1 class="page-title">Chronologie interactive — Vue Mur 3D</h1>
+
+    <section class="viewer">
+      <button id="btnLeft" class="nav-btn" aria-label="Précédent">‹</button>
+
+      <div id="carousel" class="carousel" aria-label="Mur de vignettes 3D">
+        <!-- ring + cards créés par JS -->
+      </div>
+
+      <button id="btnRight" class="nav-btn" aria-label="Suivant">›</button>
+    </section>
+
+    <div class="hint">Glisser / maintenir : déplacer • Molette : zoom • ← / → : navigation</div>
+
+    <!-- panneau de détail (ouvre en bas) -->
+    <aside id="detailPane" class="detail" aria-hidden="true">
+      <button id="closeDetail" class="close" aria-label="Fermer détail">✕</button>
+      <div class="detail-inner">
+        <img id="detailImg" src="" alt="">
+        <div class="detail-meta">
+          <h2 id="detailTitle">Titre</h2>
+          <div id="detailYear" class="year">1870</div>
+          <div id="detailText" class="text">Lorem ipsum ...</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="chronologie.js" defer></script>
+</body>
+</html>

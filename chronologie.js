@@ -1,0 +1,462 @@
+/* chronologie.js — ring abaissé au centre (remplace entièrement votre fichier) */
+
+(function(){
+  // ---------- CONFIG / DATA ----------
+  const EVENTS = [
+    { year:1870, title:"Naissance", text:"Lorem ipsum dolor sit amet. Petite description.", img:"https://www.bourg-la-reine.fr/uploads/Image/9b/IMF_LISTE/GAB_BLREINE/151011_151_Francois-HENNEBIQUE.jpg" },
+    { year:1890, title:"Études", text:"Suspendisse potenti. Info et anecdote.", img:"https://www.bourg-la-reine.fr/uploads/Image/67/IMF_LISTE/GAB_BLREINE/150891_980_Maurice-GENEVOIX.jpg" },
+    { year:1905, title:"Publication", text:"Vivamus luctus urna sed urna ultricies.", img:"https://i.pinimg.com/236x/1b/c0/9a/1bc09ad0bd4f8fb930d5fd8d2a30c2b8.jpg" },
+    { year:1914, title:"Guerre", text:"Integer ac velit nec lorem facilisis.", img:"https://personnages.cd/storage/histoires/July2022/JVZlYBYwm9ivaj8w6VEE-cropped-352x232.jpg" },
+    { year:1925, title:"Récompense", text:"Maecenas tempus, tellus eget condimentum.", img:"https://petitfute.twic.pics/medias/feg/07/84/078401.jpg?twic=v1/focus=auto/cover=900x506/max=800" },
+    { year:1930, title:"Direction", text:"Phasellus non turpis sed urna ultricies tempus.", img:"https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1F4nCf.img?w=800&h=415&q=60&m=2&f=jpg" },
+    { year:1945, title:"Héritage", text:"Fusce ultricies mi eu turpis hendrerit fringilla.", img:"https://i.pinimg.com/736x/68/27/6d/68276dfd09e4278058fd3f0affc220b2.jpg" },
+    { year:1957, title:"Visite royale", text:"Description et anecdotes (1957).", img:"https://images.radio-canada.ca/q_auto,w_720/v1/ici-premiere/16x9/reine-elisabeth-1957-ottawa.jpg" },
+    { year:1945, title:"Churchill", text:"Anecdote sur la période (Churchill).", img:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMS4zxcmlHPPrgwLRwe7-sLy83cxtRxbUKc8J7M3lxCkYo7wIEEl0DupKEBptyDWNMPfcsavFkNDyjOxFcE9R1hbjIb6QPSTPlVxYQEenRQUnzuavYHaULCag6MrX2ftYdo5dFY0gbjqR9/s1600/churchill.jpg" },
+    { year:1960, title:"Portrait", text:"Portrait important.", img:"https://www.utopix.com/fr/blog/wp-content/uploads/2024/04/ZGFjOTQwMWQtNzMxZC00YTgxLTkyZTgtNzhiZTAyN2FkMzU4_2c037431-1d49-4d36-8807-e5886a693238_8-7.jpg" },
+    { year:1937, title:"Conflit", text:"Image et détails (Asie).", img:"https://cdn-blog.superprof.com/blog_fr/wp-content/uploads/2020/08/photo-guerre-japon.jpg" },
+    { year:1950, title:"Artiste", text:"Giacometti - description.", img:"https://cdn.artphotolimited.com/images/61a73c0dbd40b81766e77efb/300x300/alberto-giacometti.jpg" },
+    { year:1895, title:"Peinture", text:"Leon Bonnat — détail.", img:"https://www.artexpertise.fr/wp-content/uploads/2023/04/Leon-Bonnat-estimation-gratuite-expert-prix-cote-tableau-Artexpertise.fr_.jpg" },
+    { year:2000, title:"Expo", text:"Evenement contemporain.", img:"https://www.planet.fr/sites/default/files/styles/diapo/public/images/diaporama/7/9/3/814397/1988813-inline.jpg.webp?itok=27Enz_M7" },
+    { year:2010, title:"Don", text:"Don important au musée.", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmy4tthkcwmshlwqFWNf3w6KHLqVoPqKOHCA&s" }
+  ];
+
+  // ---------- UI SELECTORS (attendus dans le HTML) ----------
+  const carouselEl = document.getElementById('carousel');
+  const btnL = document.getElementById('btnLeft');
+  const btnR = document.getElementById('btnRight');
+  const detailPane = document.getElementById('detailPane');
+  const closeDetail = document.getElementById('closeDetail');
+  const detailImg = document.getElementById('detailImg');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailYear = document.getElementById('detailYear');
+  const detailText = document.getElementById('detailText');
+
+  // ---------- VISUAL / BEHAVIOR CONFIG ----------
+  const visibleCount = Math.max(5, Math.min(11, Math.floor(EVENTS.length * 0.6)));
+  const focusScale = 1.06;
+  const baseScaleDefault = 0.92;
+  const CARD_WIDTH_PX = 150; // réduit légèrement pour meilleure lisibilité
+  const CARD_HEIGHT_PX = 200;
+
+  // POSITIONNEMENT DU RING (modifie si besoin)
+  // RING_TOP place le ring relatif au conteneur (plus grand % = plus bas)
+  // RING_TRANSLATE_Y ajoute un translateY à l'intérieur du transform (affecte l'apparence)
+  const RING_TOP = '66%';         // <-- position verticale (plus grand = plus bas)
+  const RING_TRANSLATE_Y = '40%'; // <-- translate qui fait descendre visuellement le ring
+
+  // ---------- internal ----------
+  const n = EVENTS.length;
+  const angleStep = 360 / n;
+  let rotationY = 0;
+  let targetRotationY = 0;
+  let animating = false;
+  let baseScale = baseScaleDefault;
+
+  // create ring and cards
+  const ring = document.createElement('div');
+  ring.className = 'ring';
+  carouselEl.innerHTML = '';
+  carouselEl.appendChild(ring);
+
+  document.documentElement.style.setProperty('--card-w', CARD_WIDTH_PX + 'px');
+  document.documentElement.style.setProperty('--card-h', CARD_HEIGHT_PX + 'px');
+
+  const cards = [];
+  EVENTS.forEach((ev, i) => {
+    const c = document.createElement('button');
+    c.className = 'card';
+    c.dataset.index = i;
+    c.setAttribute('aria-label', `${ev.year} — ${ev.title}`);
+    c.innerHTML = `
+      <div class="cover"><img loading="lazy" src="${ev.img}" alt="${ev.title}"></div>
+      <div class="meta"><div class="year">${ev.year}</div><div class="title">${ev.title}</div></div>
+    `;
+    c.style.width = CARD_WIDTH_PX + 'px';
+    c.style.height = CARD_HEIGHT_PX + 'px';
+
+    ring.appendChild(c);
+    cards.push(c);
+
+    c.addEventListener('click', () => openDetail(i));
+  });
+
+  function toRad(d){ return d * Math.PI / 180; }
+  function normAngle(a){
+    let r = ((a + 180) % 360) - 180;
+    if(r < -180) r += 360;
+    return r;
+  }
+
+  function computeRadius(){
+    const cw = CARD_WIDTH_PX;
+    const raw = (cw/2) / Math.tan(Math.PI / Math.max(3, n));
+    const maxAllowed = Math.max(420, (carouselEl.clientWidth || window.innerWidth) * 0.48);
+    const minAllowed = 300;
+    const r = Math.max(minAllowed, Math.min(maxAllowed, Math.round(raw * 1.06)));
+    return r;
+  }
+
+  function isVisible(frontIndex, i){
+    const dist = Math.min(Math.abs(i - frontIndex), n - Math.abs(i - frontIndex));
+    const half = Math.floor(visibleCount / 2);
+    return dist <= half;
+  }
+
+  function findFrontIndex(){
+    let best = 0, bestVal = Infinity;
+    for(let i=0;i<n;i++){
+      const v = Math.abs(normAngle(i * angleStep + rotationY));
+      if(v < bestVal){ bestVal = v; best = i; }
+    }
+    return best;
+  }
+
+  function applyTransforms(){
+    const radius = computeRadius();
+    ring.style.transform = `translate(-50%, ${RING_TRANSLATE_Y}) rotateY(${rotationY}deg) scale(${baseScale})`;
+    const front = findFrontIndex();
+
+    cards.forEach((c,i) => {
+      const ang = i * angleStep;
+      c.style.transform = `rotateY(${ang}deg) translateZ(${radius}px) translateY(-50%)`;
+      const rel = normAngle(ang + rotationY);
+      const absRel = Math.abs(rel);
+      const depthFactor = Math.max(0, 1 - absRel / 180);
+
+      if(isVisible(front, i)){
+        if(absRel < angleStep * 0.6){
+          c.style.opacity = '1';
+          c.style.pointerEvents = 'auto';
+          c.style.zIndex = '300';
+          c.style.transform += ` scale(${focusScale})`;
+          c.classList.add('front');
+        } else {
+          const o = 0.4 + depthFactor * 0.9;
+          c.style.opacity = String(Math.max(0.4, Math.min(0.98, o)));
+          c.style.pointerEvents = 'auto';
+          c.style.zIndex = String(Math.round(100 + depthFactor * 140));
+          c.classList.remove('front');
+        }
+      } else {
+        c.style.opacity = '0.06';
+        c.style.pointerEvents = 'none';
+        c.style.zIndex = '1';
+        c.classList.remove('front');
+      }
+    });
+  }
+
+  function animateTo(target, cb){
+    targetRotationY = target;
+    animating = true;
+    const step = () => {
+      rotationY += (targetRotationY - rotationY) * 0.16;
+      applyTransforms();
+      if(Math.abs(targetRotationY - rotationY) < 0.04){
+        rotationY = targetRotationY;
+        animating = false;
+        applyTransforms();
+        if(cb) cb();
+      } else {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  function goToIndex(index, animate = true){
+    index = ((index % n) + n) % n;
+    let desired = -index * angleStep;
+    while(desired - rotationY > 180) desired -= 360;
+    while(desired - rotationY < -180) desired += 360;
+    if(animate) animateTo(desired); else { rotationY = desired; applyTransforms(); }
+  }
+
+  function next(steps = 1){ goToIndex(getCurrentIndex() + steps, true); }
+  function prev(steps = 1){ goToIndex(getCurrentIndex() - steps, true); }
+
+  function getCurrentIndex(){
+    let best = 0, bestVal = Infinity;
+    for(let i=0;i<n;i++){
+      const v = Math.abs(normAngle(i * angleStep + rotationY));
+      if(v < bestVal){ bestVal = v; best = i; }
+    }
+    return best;
+  }
+
+  function openDetail(i){
+    const ev = EVENTS[i];
+    if(!detailPane) return;
+    detailImg.src = ev.img;
+    detailTitle.textContent = ev.title;
+    detailYear.textContent = ev.year;
+    detailText.innerHTML = `<p>${ev.text}</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel arcu ut nibh luctus posuere.</p>`;
+    detailPane.setAttribute('aria-hidden','false');
+    goToIndex(i, true);
+    closeDetail && closeDetail.focus();
+  }
+  closeDetail && closeDetail.addEventListener('click', ()=> detailPane.setAttribute('aria-hidden','true'));
+
+  // input handlers
+  let dragging = false, lastX = 0;
+  carouselEl.addEventListener('pointerdown', (e)=>{
+    dragging = true; lastX = e.clientX;
+    carouselEl.setPointerCapture && carouselEl.setPointerCapture(e.pointerId);
+    document.body.style.cursor = 'grabbing';
+  });
+  window.addEventListener('pointermove', (e)=>{
+    if(!dragging) return;
+    const dx = e.clientX - lastX;
+    lastX = e.clientX;
+    rotationY += dx * 0.28;
+    applyTransforms();
+  });
+  window.addEventListener('pointerup', (e)=>{
+    if(!dragging) return;
+    dragging = false; document.body.style.cursor = '';
+    const nearest = getCurrentIndex();
+    goToIndex(nearest, true);
+  });
+
+  carouselEl.addEventListener('wheel', (ev)=>{
+    ev.preventDefault();
+    baseScale += (ev.deltaY < 0 ? 0.045 : -0.045);
+    baseScale = Math.max(0.62, Math.min(1.08, baseScale));
+    applyTransforms();
+  }, { passive:false });
+
+  btnL && btnL.addEventListener('click', () => prev(1));
+  btnR && btnR.addEventListener('click', () => next(1));
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowLeft') prev(1);
+    if(e.key === 'ArrowRight') next(1);
+    if(e.key === 'Escape') detailPane && detailPane.setAttribute('aria-hidden','true');
+  });
+
+  function init(){
+    rotationY = 0;
+    baseScale = baseScaleDefault;
+    ring.style.position = 'absolute';
+    ring.style.left = '50%';
+    ring.style.top = RING_TOP;            // <-- position verticale du ring
+    ring.style.transformStyle = 'preserve-3d';
+    ring.style.transformOrigin = 'center center';
+    applyTransforms();
+    goToIndex(0, false);
+    setTimeout(()=> { applyTransforms(); }, 80);
+    window.addEventListener('resize', applyTransforms);
+  }
+  init();
+
+  // expose helpers for debugging in console
+  window._chronomap = {
+    EVENTS, goToIndex, next, prev, getCurrentIndex, computeRadius, applyTransforms
+  };
+
+})();
+
+/* ---------- Robust timeline click handler (improved) ----------
+   Remplace l'ancien "timeline detail enhancer".
+   - écoute pointerdown/touchstart/click en capture
+   - vérifie elementFromPoint et retry court si un overlay temporaire bloque
+   - ouvre panneau détail (lorem) sans modifier le DOM existant
+----------------------------------------------------------------*/
+(function(){
+  const SELECTORS = [
+    '.card',
+    '.timeline-card',
+    '.carousel-item',
+    '.tile',
+    '.panel',
+    '.item',
+    '.frame',
+    '.alcove .canvas img',
+    '.canvas img',
+    '.thumb img',
+    '#carousel img',
+    '[data-timeline-index]'
+  ].join(',');
+
+  const $ = (s, r=document) => r.querySelector(s);
+  const $all = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  // create detail pane if missing (non-destructif)
+  if(!document.getElementById('timelineDetailPane')){
+    const pane = document.createElement('div');
+    pane.id = 'timelineDetailPane';
+    pane.setAttribute('aria-hidden','true');
+    pane.innerHTML = `
+      <div class="td-inner" role="dialog" aria-label="Détails événement">
+        <button class="td-close" aria-label="Fermer">✕</button>
+        <div class="td-left"><img class="td-img" src="" alt=""></div>
+        <div class="td-right">
+          <div class="td-year">0000</div>
+          <h3 class="td-title">Titre</h3>
+          <div class="td-body">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti.</p>
+            <p>Phasellus vitae augue ac turpis feugiat dictum. Nunc vitae urna non sem interdum dictum.</p>
+          </div>
+        </div>
+      </div>
+    `;
+    const css = `
+      #timelineDetailPane{ position:fixed; left:50%; bottom:8vh; transform:translate(-50%,18px); width:min(980px,94%); background:linear-gradient(180deg, rgba(6,14,13,0.94), rgba(2,6,6,0.98)); color:#e9efe9; border-radius:10px; box-shadow:0 30px 120px rgba(0,0,0,0.7); padding:14px; border:1px solid rgba(255,255,255,0.02); opacity:0; pointer-events:none; transition:opacity 260ms ease, transform 320ms cubic-bezier(.2,.9,.3,1); z-index:1200; }
+      #timelineDetailPane[aria-hidden="false"]{ opacity:1; pointer-events:auto; transform:translate(-50%,0); }
+      #timelineDetailPane .td-inner{ display:flex; gap:16px; align-items:flex-start; position:relative; }
+      #timelineDetailPane .td-left{ flex:0 0 240px; height:160px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02); box-shadow: inset 0 2px 6px rgba(255,255,255,0.02); }
+      #timelineDetailPane .td-left img{ width:100%; height:100%; object-fit:cover; display:block; }
+      #timelineDetailPane .td-right{ flex:1; font-family: Georgia, serif; line-height:1.45; padding-right:8px; }
+      #timelineDetailPane .td-title{ margin:4px 0 8px 0; font-size:18px; color:#fff; }
+      #timelineDetailPane .td-year{ color: #7fe0bd; font-weight:700; font-size:13px; opacity:0.95; }
+      #timelineDetailPane .td-body p{ margin:0 0 10px 0; color:rgba(233,230,222,0.95); }
+      #timelineDetailPane .td-close{ position:absolute; right:12px; top:8px; background:rgba(0,0,0,0.45); border:0; color:#fff; padding:6px 10px; border-radius:8px; cursor:pointer; font-size:14px; box-shadow:0 6px 18px rgba(0,0,0,0.45); }
+      @media (max-width:720px){ #timelineDetailPane .td-inner{ flex-direction:column; } #timelineDetailPane .td-left{ width:100%; height:220px; } }
+    `;
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+    document.body.appendChild(pane);
+  }
+
+  const pane = document.getElementById('timelineDetailPane');
+  const closeBtn = pane.querySelector('.td-close');
+  const imgEl = pane.querySelector('.td-img');
+  const titleEl = pane.querySelector('.td-title');
+  const yearEl = pane.querySelector('.td-year');
+  const bodyEl = pane.querySelector('.td-body');
+
+  function openPane({year='', title='Événement', src='', html=null}){
+    if(src) imgEl.src = src; else imgEl.removeAttribute('src');
+    imgEl.alt = title;
+    titleEl.textContent = title;
+    yearEl.textContent = year || '';
+    if(html) bodyEl.innerHTML = html;
+    else bodyEl.innerHTML = `
+      <p><strong>${title} — ${year || '—'}</strong></p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur, nibh in suscipit fermentum, lorem sem ultricies mi.</p>
+      <p>Donec et risus eu urna dictum pharetra. Integer at dignissim lorem. Suspendisse potenti.</p>
+    `;
+    pane.setAttribute('aria-hidden','false');
+  }
+  function closePane(){ pane.setAttribute('aria-hidden','true'); }
+
+  closeBtn.addEventListener('click', closePane);
+  window.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closePane(); });
+
+  // helper: try to find candidate from element or point
+  function findCandidateFromEvent(ev){
+    // prefer closest selector from the original target
+    const direct = ev.target && ev.target.closest ? ev.target.closest(SELECTORS) : null;
+    if(direct) return direct;
+    // try elementFromPoint (use client coords)
+    const x = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+    const y = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY) || 0;
+    const el = document.elementFromPoint(x, y);
+    if(!el) return null;
+    return el.closest ? el.closest(SELECTORS) : null;
+  }
+
+  // robust open routine (with a short retry if an overlay hides the card)
+  function handleOpenForEvent(ev){
+    // don't process right-click / ctrl-click
+    if(ev.button && ev.button !== 0) return;
+    // find candidate immediately
+    let candidate = findCandidateFromEvent(ev);
+    if(candidate){
+      processCandidate(candidate);
+      return;
+    }
+
+    // if nothing found, attempt a quick retry loop (100ms total) to account for transient overlays/animations
+    let attempts = 0;
+    const maxAttempts = 6;
+    const retry = setInterval(() => {
+      attempts++;
+      candidate = findCandidateFromEvent(ev);
+      if(candidate || attempts >= maxAttempts){
+        clearInterval(retry);
+        if(candidate) processCandidate(candidate);
+      }
+    }, 18);
+  }
+
+  function processCandidate(candidate){
+    // safety: ensure it's visible
+    if(!candidate) return;
+    // extract metadata (data-* first, then fallbacks)
+    const dataYear = candidate.dataset && candidate.dataset.year ? candidate.dataset.year.trim() : '';
+    const dataTitle = candidate.dataset && candidate.dataset.title ? candidate.dataset.title.trim() : '';
+    const dataImg  = candidate.dataset && candidate.dataset.img ? candidate.dataset.img.trim() : '';
+    const dataDesc = candidate.dataset && candidate.dataset.desc ? candidate.dataset.desc.trim() : '';
+
+    const qYear = candidate.querySelector && (candidate.querySelector('.year') || candidate.querySelector('.meta .year'));
+    const qTitle = candidate.querySelector && (candidate.querySelector('.title') || candidate.querySelector('.meta .title') || candidate.querySelector('h4') || candidate.querySelector('h3'));
+    const qImg = candidate.querySelector && candidate.querySelector('img');
+
+    const year = dataYear || (qYear ? qYear.textContent.trim() : '');
+    const title = dataTitle || (qTitle ? qTitle.textContent.trim() : '') || (qImg ? (qImg.alt || '') : '') || 'Événement';
+    const src = dataImg || (qImg ? qImg.src : '') || '';
+
+    // try richer text from global arrays if present
+    let htmlDesc = null;
+    try {
+      const idx = candidate.dataset && (candidate.dataset.index || candidate.dataset.timelineIndex || candidate.dataset['timelineIndex']);
+      if(idx && window.events && window.events[idx] && window.events[idx].description){
+        htmlDesc = `<p>${window.events[idx].description}</p>`;
+      } else if(idx && window.TIMELINE_EVENTS && TIMELINE_EVENTS[idx] && TIMELINE_EVENTS[idx].desc){
+        htmlDesc = `<p>${TIMELINE_EVENTS[idx].desc}</p>`;
+      } else if(dataDesc){
+        htmlDesc = `<p>${dataDesc}</p>`;
+      }
+    } catch(e){
+      console.warn('[timeline] error while reading global events:', e);
+    }
+
+    openPane({ year, title, src, html: htmlDesc });
+  }
+
+  // install listeners: pointerdown (capture), touchstart, click (capture) to be defensive
+  const optsCapture = { capture: true, passive: false };
+
+  // pointerdown: primary for mouse/pen/touch
+  document.addEventListener('pointerdown', function(ev){
+    // if pane is open and click inside pane, ignore (handled elsewhere)
+    if(pane.getAttribute('aria-hidden') === 'false' && pane.contains(ev.target)) return;
+    // if clicked a detail-close, skip
+    if(ev.target.closest && ev.target.closest('#timelineDetailPane')) return;
+    try { handleOpenForEvent(ev); } catch(e){ console.error('[timeline] handler error', e); }
+  }, optsCapture);
+
+  // touchstart fallback
+  document.addEventListener('touchstart', function(ev){
+    try { handleOpenForEvent(ev); } catch(e){ console.error('[timeline] handler error', e); }
+  }, optsCapture);
+
+  // click capture as final catch-all
+  document.addEventListener('click', function(ev){
+    // allow links inside timeline to work normally unless we specifically handle a card
+    const candidate = findCandidateFromEvent(ev);
+    if(candidate){
+      ev.preventDefault(); // prevent link navigation if any
+      processCandidate(candidate);
+      ev.stopPropagation();
+    }
+  }, optsCapture);
+
+  // extra debug: if user opens console we might want to re-attach listeners (helps intermittent race)
+  window.addEventListener('focus', () => {
+    // no-op but left for future expansions
+  });
+
+  // click outside pane closes it
+  document.addEventListener('click', function(e){
+    if(pane.getAttribute('aria-hidden') === 'false' && !pane.contains(e.target)){
+      // don't close when clicking a timeline card (we want card clicks to open)
+      if(e.target.closest && e.target.closest(SELECTORS)) return;
+      closePane();
+    }
+  });
+
+  // developer debug helper - enable this to log pointer events and elementFromPoint if you still have issues.
+  // console.log('[timeline] robust click handler active — selectors:', SELECTORS);
+})();

@@ -2,23 +2,114 @@
 
 (function(){
   // ---------- CONFIG / DATA ----------
-  const EVENTS = [
-    { year:1870, title:"Naissance", text:"Lorem ipsum dolor sit amet. Petite description.", img:"https://www.bourg-la-reine.fr/uploads/Image/9b/IMF_LISTE/GAB_BLREINE/151011_151_Francois-HENNEBIQUE.jpg" },
-    { year:1890, title:"Études", text:"Suspendisse potenti. Info et anecdote.", img:"https://www.bourg-la-reine.fr/uploads/Image/67/IMF_LISTE/GAB_BLREINE/150891_980_Maurice-GENEVOIX.jpg" },
-    { year:1905, title:"Publication", text:"Vivamus luctus urna sed urna ultricies.", img:"https://i.pinimg.com/236x/1b/c0/9a/1bc09ad0bd4f8fb930d5fd8d2a30c2b8.jpg" },
-    { year:1914, title:"Guerre", text:"Integer ac velit nec lorem facilisis.", img:"https://personnages.cd/storage/histoires/July2022/JVZlYBYwm9ivaj8w6VEE-cropped-352x232.jpg" },
-    { year:1925, title:"Récompense", text:"Maecenas tempus, tellus eget condimentum.", img:"https://petitfute.twic.pics/medias/feg/07/84/078401.jpg?twic=v1/focus=auto/cover=900x506/max=800" },
-    { year:1930, title:"Direction", text:"Phasellus non turpis sed urna ultricies tempus.", img:"https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1F4nCf.img?w=800&h=415&q=60&m=2&f=jpg" },
-    { year:1945, title:"Héritage", text:"Fusce ultricies mi eu turpis hendrerit fringilla.", img:"https://i.pinimg.com/736x/68/27/6d/68276dfd09e4278058fd3f0affc220b2.jpg" },
-    { year:1957, title:"Visite royale", text:"Description et anecdotes (1957).", img:"https://images.radio-canada.ca/q_auto,w_720/v1/ici-premiere/16x9/reine-elisabeth-1957-ottawa.jpg" },
-    { year:1945, title:"Churchill", text:"Anecdote sur la période (Churchill).", img:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMS4zxcmlHPPrgwLRwe7-sLy83cxtRxbUKc8J7M3lxCkYo7wIEEl0DupKEBptyDWNMPfcsavFkNDyjOxFcE9R1hbjIb6QPSTPlVxYQEenRQUnzuavYHaULCag6MrX2ftYdo5dFY0gbjqR9/s1600/churchill.jpg" },
-    { year:1960, title:"Portrait", text:"Portrait important.", img:"https://www.utopix.com/fr/blog/wp-content/uploads/2024/04/ZGFjOTQwMWQtNzMxZC00YTgxLTkyZTgtNzhiZTAyN2FkMzU4_2c037431-1d49-4d36-8807-e5886a693238_8-7.jpg" },
-    { year:1937, title:"Conflit", text:"Image et détails (Asie).", img:"https://cdn-blog.superprof.com/blog_fr/wp-content/uploads/2020/08/photo-guerre-japon.jpg" },
-    { year:1950, title:"Artiste", text:"Giacometti - description.", img:"https://cdn.artphotolimited.com/images/61a73c0dbd40b81766e77efb/300x300/alberto-giacometti.jpg" },
-    { year:1895, title:"Peinture", text:"Leon Bonnat — détail.", img:"https://www.artexpertise.fr/wp-content/uploads/2023/04/Leon-Bonnat-estimation-gratuite-expert-prix-cote-tableau-Artexpertise.fr_.jpg" },
-    { year:2000, title:"Expo", text:"Evenement contemporain.", img:"https://www.planet.fr/sites/default/files/styles/diapo/public/images/diaporama/7/9/3/814397/1988813-inline.jpg.webp?itok=27Enz_M7" },
-    { year:2010, title:"Don", text:"Don important au musée.", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmy4tthkcwmshlwqFWNf3w6KHLqVoPqKOHCA&s" }
+ const EVENTS = [
+    {
+      year: "8 avril 1923",
+      title: "Naissance Louis Xavier Dominique Lareng est né à Ayzac-Ost (Hautes-Pyrénées)." ,
+      text: "Louis Xavier Dominique Lareng est né à Ayzac-Ost (Hautes-Pyrénées).",
+      source: "Wikipédia",
+      img: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Louis_Lareng%2C_le_24_mai_2013.JPG"
+    },
+    {
+      year: "1955",
+      title: "Doctorat en médecine",
+      text: "Il obtient son diplôme de docteur en médecine.",
+      source: "Wikipédia",
+      img: "https://www.univ-toulouse.fr/sites/default/files/louis_lareng.jpg"
+    },
+    {
+      year: "1961",
+      title: "Professeur agrégé d’anesthésie-réanimation",
+      text: "Il devient professeur, spécialisé dans l’anesthésie-réanimation, à l’université de Toulouse.",
+      source: "Wikipédia",
+      img: "https://www.char-fr.net/local/cache-vignettes/L515xH669/louis_lareng_jeune-6a598.jpg?1744949566"
+    },
+    {
+      year: "16 juillet 1968",
+      title: "Création du premier SAMU à Toulouse",
+      text: "Une délibération de la Commission Administrative des Hôpitaux de Toulouse crée le SAMU à titre d’essai, sous l’impulsion de Lareng.",
+      source: "samu-urgences-de-france.fr",
+      img: "https://protectioncivile06.org/wp-content/uploads/2019/11/LARENG_1-1.jpg"
+    },
+    {
+      year: "1972",
+      title: "Reconnaissance du SAMU",
+      text: "Le système du SAMU commence à être officiellement reconnu en France, avec régulation d’appel et intervention pré-hospitalière.",
+      source: "Wikipédia",
+      img: "https://www.char-fr.net/IMG/png/lareng_louis_2.png"
+    },
+    {
+      year: "21 juin 1981",
+      title: "Élection député",
+      text: "Lareng est élu député de la Haute-Garonne (groupe socialiste).",
+      source: "Wikipédia",
+      img: "https://www.assemblee-nationale.fr/histoire/trombinoscope/VRepublique/Legis07/Photo/lareng_louis.jpg"
+    },
+    {
+      year: "6 janvier 1986",
+      title: "Loi « Lareng » sur l’aide médicale urgente",
+      text: "En tant que député, il fait adopter la loi qui étend le SAMU à l’ensemble du territoire français.",
+      source: "Wikipédia",
+      img: "https://france3-regions.franceinfo.fr/image/X74ilsD4lU3U8Gb2HfGXcoBbec0/2101x1181/regions/2020/06/09/5edf916064a65_maxnewsworldtwo618406-4498325.jpg"
+    },
+    {
+      year: "7 octobre 2008",
+      title: "Inauguration du Pavillon Louis Lareng",
+      text: "À Toulouse, le bâtiment du SAMU 31 est inauguré et porte désormais son nom.",
+      source: "CHU Média",
+      img: "https://mediaclip.ina.fr/media/videos/imagettes/886x498/2d1/R24064614.jpeg"
+    },
+    {
+      year: "2011",
+      title: "40 ans du SAMU & hommage",
+      text: "Le documentaire « Louis Lareng – 40 ans au pied de l’arbre » est diffusé en hommage à son action.",
+      source: "Wikipédia",
+      img: "https://images.ladepeche.fr/api/v1/images/view/5c37cefd3e454652ab344f7e/small/image.jpg"
+    },
+    {
+      year: "2012",
+      title: "Médaille Grand Or de la Protection Civile",
+      text: "Il reçoit cette distinction en reconnaissance de son engagement dans la médecine d'urgence.",
+      source: "Wikipédia",
+      img: "https://lh3.googleusercontent.com/proxy/WsA0H5G2WNQ59MXLGKBZSB_3HBFESFv92sIZpbtp3DwkuzzP3u_wuKk25_V7u6cC26BdMyGgEJCCUz1xak3a9nez3Ise6qYpVYU"
+    },
+    {
+      year: "8 avril 2016",
+      title: "Inscription de la Légion d’honneur",
+      text: "Il est fait chevalier de la Légion d’honneur (ou distinction équivalente selon les sources).",
+      source: "Wikipédia",
+      img: "https://cdn-hub.ina.fr/notice/690x517/107/RBF01012396.jpeg"
+    },
+    {
+      year: "3 novembre 2019",
+      title: "Décès",
+      text: "Louis Lareng s’éteint à Toulouse à l’âge de 96 ans.",
+      source: "Santé et Autonomie / communiqués",
+      img: "https://www.grandsudinsolite.fr/client/gfx/photos/produit/01-lareng-1_16373.jpg"
+    },
+    {
+      year: "13 mai 2022",
+      title: "Station de téléphérique nommée en son honneur",
+      text: "La station « Hôpital Rangueil – Louis Lareng » est inaugurée à Toulouse en hommage à son œuvre.",
+      source: "Wikipédia / communiqués locaux",
+      img: "https://i.ytimg.com/vi/jLG6HlRHgys/maxresdefault.jpg"
+    },
+    {
+      year: "2020-21 (date indéterminée)",
+      title: "Promotion « Louis Lareng »",
+      text: "La promotion des élèves directeurs d’hôpital de l'EHESP prend le nom «Louis Lareng» en reconnaissance de son impact.",
+      source: "Wikipédia / EHESP",
+      img: "https://www.univ-toulouse.fr/sites/default/files/louis_lareng.jpg"
+    },
+    {
+      year: "Date indéterminée",
+      title: "Impact et héritage national",
+      text: "Le modèle SAMU initié par Lareng est désormais présent dans presque tous les départements français, incarnant la régulation médicosanitaire d'urgence.",
+      source: "Analyses historiques / CHU",
+      img: "https://www.char-fr.net/IMG/jpg/lareng-serre_1984.jpg"
+    }
   ];
+
 
   // ---------- UI SELECTORS (attendus dans le HTML) ----------
   const carouselEl = document.getElementById('carousel');
@@ -190,7 +281,6 @@
     detailImg.src = ev.img;
     detailTitle.textContent = ev.title;
     detailYear.textContent = ev.year;
-    detailText.innerHTML = `<p>${ev.text}</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel arcu ut nibh luctus posuere.</p>`;
     detailPane.setAttribute('aria-hidden','false');
     goToIndex(i, true);
     closeDetail && closeDetail.focus();
@@ -292,10 +382,7 @@
         <div class="td-right">
           <div class="td-year">0000</div>
           <h3 class="td-title">Titre</h3>
-          <div class="td-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti.</p>
-            <p>Phasellus vitae augue ac turpis feugiat dictum. Nunc vitae urna non sem interdum dictum.</p>
-          </div>
+          <div class="detailText"><p></p></div>
         </div>
       </div>
     `;
@@ -331,11 +418,6 @@
     titleEl.textContent = title;
     yearEl.textContent = year || '';
     if(html) bodyEl.innerHTML = html;
-    else bodyEl.innerHTML = `
-      <p><strong>${title} — ${year || '—'}</strong></p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur, nibh in suscipit fermentum, lorem sem ultricies mi.</p>
-      <p>Donec et risus eu urna dictum pharetra. Integer at dignissim lorem. Suspendisse potenti.</p>
-    `;
     pane.setAttribute('aria-hidden','false');
   }
   function closePane(){ pane.setAttribute('aria-hidden','true'); }

@@ -9,11 +9,21 @@
 }
 
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;color:#e9efe9;background:linear-gradient(180deg,#071113 0%, #020405 80%);}
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #e9efe9;
+  background-image: url('https://insights.som.yale.edu/sites/default/files/styles/optimized/public/2025-02/Metropolitan%20Museum%20skylights_1.jpg?itok=v-3ianPg');
+  background-size: cover; /* L'image couvre tout l'espace sans répéter */
+  background-position: center center; /* L'image est centrée */
+  background-repeat: no-repeat; /* Evite la répétition de l'image */
+}
+
 
 /* top nav */
 .topbar{height:62px;display:flex;align-items:center;justify-content:center;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.02)}
-.nav a{color:rgba(220,230,220,0.85);text-decoration:none;margin:0 14px;font-weight:600}
+.nav a{color:rgba(0, 0, 0, 0.85);text-decoration:none;margin:0 14px;font-weight:600}
 .nav a.active{color:var(--accent)}
 
 /* page */

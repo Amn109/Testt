@@ -6,15 +6,16 @@
 
 (function(){
   const imagesList = [
-    "https://www.bourg-la-reine.fr/uploads/Image/9b/IMF_LISTE/GAB_BLREINE/151011_151_Francois-HENNEBIQUE.jpg",
-    "https://www.bourg-la-reine.fr/uploads/Image/67/IMF_LISTE/GAB_BLREINE/150891_980_Maurice-GENEVOIX.jpg",
-    "https://i.pinimg.com/236x/1b/c0/9a/1bc09ad0bd4f8fb930d5fd8d2a30c2b8.jpg",
-    "https://personnages.cd/storage/histoires/July2022/JVZlYBYwm9ivaj8w6VEE-cropped-352x232.jpg",
-    "https://petitfute.twic.pics/medias/feg/07/84/078401.jpg?twic=v1/focus=auto/cover=900x506/max=800",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmy4tthkcwmshlwqFWNf3w6KHLqVoPqKOHCA&s",
-    "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1F4nCf.img?w=800&h=415&q=60&m=2&f=jpg",
-    "https://www.superprof.lu/blog/wp-content/uploads/2018/12/personnages-chronologie-japon.jpg",
-    "https://i.pinimg.com/736x/68/27/6d/68276dfd09e4278058fd3f0affc220b2.jpg"
+    
+    "https://images.ladepeche.fr/api/v1/images/view/5c2cbabc8fe56f1b09089402/large/image.jpg",
+    "https://scontent-cdg4-2.xx.fbcdn.net/v/t1.6435-9/74627109_2380577095524706_1145143056840785920_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=2SBEQQYW-7oQ7kNvwH-WGYO&_nc_oc=AdmwgfJDyc2UE6xv3ij-Cio4T2qCDiHg4ARe0E1MnoDbpHHqQEXt-AM7KaTBX_I3ALcgJEPjv-nGYpXMY0dq2nxk&_nc_zt=23&_nc_ht=scontent-cdg4-2.xx&_nc_gid=Em8FNThGKsa0ZsaH8xx9FQ&oh=00_AfjEMehYiq_Jyk4fDYSeMUYguCzdlxaX78Nbt_-azx8b6g&oe=69455FAE",
+    "https://images.ladepeche.fr/api/v1/images/view/5dc15ebad286c24d460e5117/large/image.jpg?v=1",
+    "https://scontent-cdg4-3.xx.fbcdn.net/v/t1.6435-9/74620871_2380576062191476_5231523487994085376_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=ZH70h6wXG6MQ7kNvwG_UbET&_nc_oc=Adnj2_UneQ1luoA4L4HrEerEDP8JJCp3tfX_TTgB5_zltz7lL9243ru-E9Kki83MXg_9UCn-X3C8e22D6gk8PXOE&_nc_zt=23&_nc_ht=scontent-cdg4-3.xx&_nc_gid=jMk-wHAh_Hq05Ic-1eLOEQ&oh=00_AfiZCGcWrDtVUZwhMQXBCUfj-NcWPYMNqFuCdCnlJ7HxGQ&oe=694551AD",
+    "https://scontent-cdg4-2.xx.fbcdn.net/v/t1.6435-9/73523556_2380576698858079_5476094245976670208_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=UZ_eFqWJgRoQ7kNvwGwRWsY&_nc_oc=AdmscK7XkslbDos1f3hil6o5BrjpTvij1bX38RfWjRurF7ypCVQg2Syi1Q7Yca9YjAjMvWvJtn4j5zaeVrm8cCQR&_nc_zt=23&_nc_ht=scontent-cdg4-2.xx&_nc_gid=-jIGSL3fB1GKpeDTKflO7A&oh=00_AfhkKJyvlsak8p7po-749CzhM3pHX1j860Y8XOBtikQqHQ&oe=69455685",
+    "https://images.ladepeche.fr/api/v1/images/view/5dbef14fd286c20ffc76e545/full/image.jpg?v=1",
+    "https://images.ladepeche.fr/api/v1/images/view/5dbef1c68fe56f16e27db5f5/full/image.jpg?v=1 , https://protectioncivile06.org/wp-content/uploads/2019/11/LARENG_1-1.jpg",
+    "https://cdn-s-www.dna.fr/images/7AB6C42E-5232-4848-8550-B6CF282F263A/NW_raw/louis-lareng-(au-centre)-avec-jean-jacques-buttiker-responsable-de-l-antenne-de-bartenheim-et-elisabeth-groelly-presidente-departementale-de-la-protection-civile-photos-dna-ghislaine-mougel-1424800907.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/c/c1/Louis_Lareng%2C_le_24_mai_2013.JPG"
   ];
 
   const MAX_IMAGES = Math.min(20, imagesList.length);

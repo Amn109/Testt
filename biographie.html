@@ -3,41 +3,49 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Biographie — Parcours de vie</title>
+  <title>Musée — Biographie (Galerie murale)</title>
   <link rel="stylesheet" href="biographie.css">
 </head>
 <body>
   <nav class="topbar">
     <div class="nav-inner">
-      <a class="nav-btn" href="index.html">Accueil</a>
-      <a class="nav-btn" href="archives.html">Archives</a>
+      <div class="nav-links">
+        <a class="nav-btn" href="index.html">Accueil</a>
+      </div>
     </div>
   </nav>
 
   <canvas id="scene-canvas"></canvas>
 
-  <!-- Overlay biographie -->
+  <!-- overlay biographie -->
   <div id="bioOverlay" class="bio-overlay" aria-hidden="true">
-    <div class="bio-card">
-      <div class="bio-head">
-        <div>
-          <h2 id="bioTitle">Titre</h2>
-          <div id="bioSubtitle" class="subtitle">Sous-titre</div>
-        </div>
-        <div class="bio-controls">
-          <button id="prevBtn">Précédent</button>
-          <button id="nextBtn">Suivant</button>
-          <button id="closeBtn" class="close">Fermer</button>
+    <div class="bio-sheet" role="dialog" aria-modal="true">
+      <button id="bioClose" class="bio-close" aria-label="Fermer">✕</button>
+
+      <div class="bio-left">
+        <img id="bioImage" src="" alt="Œuvre">
+      </div>
+
+      <div class="bio-right">
+        <h2 id="bioTitle">Titre de l'œuvre</h2>
+        <div id="bioSubtitle" class="subtitle">Tranche d'âge</div>
+        <div id="bioText" class="bio-text">Description complète — texte long prévu pour la biographie. Remplace ce texte par ce que tu veux.</div>
+
+        <div class="bio-actions">
+          <button id="bioPrev" class="btn">Précédent</button>
+          <button id="bioNext" class="btn">Suivant</button>
         </div>
       </div>
-      <div id="bioText" class="bio-text">Contenu…</div>
     </div>
   </div>
 
+  <div class="hint-mini">Clique sur un tableau pour ouvrir la fiche — Échap pour fermer</div>
+
+  <!-- libs -->
   <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-  <script src="biographie.js"></script>
+  <script src="biographie.js" defer></script>
 </body>
 </html>

@@ -522,3 +522,4 @@
 
   console.log('script.js chargé — images des tableaux : tentative local → remote → embedded. Door Z:', doorCenterZ);
 })();
+

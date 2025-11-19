@@ -1,6 +1,6 @@
 :root{
   /* palette océan / muséale */
-  --wall-1: #022f3a;
+  --wall-1: #002666;
   --wall-2: #00000000;
   --lightbox-bg: rgba(2,8,12,0.92);
   --container:1200px;
@@ -461,3 +461,4 @@ body.lightbox-open{ overflow:hidden; }
   .overlay{ top:calc(60% + 140px); }
   :root{ --plank-width: 80px; }
 }
+

@@ -7,16 +7,16 @@
 
 (function(){
   const SLOTS = [
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+    "file:///C:/Users/mercu/Downloads/Et%20Lareng%20cr%C3%A9a%20le%20SAMU%20%20%20l%E2%80%99incroyable%20histoire%20des%20Urgences%20!%20(1).mp4",
+    "file:///C:/Users/mercu/Downloads/Thomas%20et%20professeur%20Louis%20Lareng%20%20Concours%20Moteur!%202020.mp4",
+    "file:///C:/Users/mercu/Downloads/Tarbes%20%20%20Le%20centre%20de%20sante%CC%81%20Louis%20Lareng%20inaugure%CC%81.mp4",
+    "file:///C:/Users/mercu/Downloads/ToulouseSant%C3%A9%20%20Portrait%20de%20Louis%20Lareng.mp4",
+    "file:///C:/Users/mercu/Downloads/Louis%20Lareng.mp4",
+    "file:///C:/Users/mercu/Downloads/Hommage%20de%20UT3%20au%20Professeur%20Louis%20Lareng%20(23%2001%202018).mp4",
+    "file:///C:/Users/mercu/Downloads/Les%20R%C3%A9actions%20du%20Professeur%20Louis%20Lareng%20(Toulouse).mp4",
+    "file:///C:/Users/mercu/Downloads/Louis%20Lareng%20et%20le%20Samu%20vivre%20dans%20l%E2%80%99urgence.mp4",
+    "file:///C:/Users/mercu/Downloads/T%C3%A9l%C3%A9r%C3%A9gulation%20ambulanci%C3%A8re%201966%20Pr%20Lareng.mp4",
+    "file:///C:/Users/mercu/Downloads/Le%20SAMU%20tout%20neuf%20de%20Toulouse.mp4"
   ];
 
   const TITLES = [

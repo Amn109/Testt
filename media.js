@@ -1,41 +1,33 @@
-/* media.js — ajoute la timeline (seek) au-dessus des vignettes
-   - affiche temps courant / durée
-   - affiche buffered
-   - permet de chercher (drag / click)
-   - garde le reste : rideau, vignettes, autoplay overlay, volume, fullscreen, play/pause
+/* media.js — version YouTube thumbnails + iframe embed (minimal)
+   - Affiche les miniatures des vidéos YouTube listées dans SLOTS
+   - Au clic, insère un iframe youtube-nocookie dans #screenArea
+   - Ne convertit pas/ni n'essaie d'utiliser des file:// ou sandbox: schemes
 */
 
 (function(){
+  // --- 10 liens YouTube fournis
   const SLOTS = [
-    "file:///C:/Users/mercu/Downloads/Et%20Lareng%20cr%C3%A9a%20le%20SAMU%20%20%20l%E2%80%99incroyable%20histoire%20des%20Urgences%20!%20(1).mp4",
-    "file:///C:/Users/mercu/Downloads/Thomas%20et%20professeur%20Louis%20Lareng%20%20Concours%20Moteur!%202020.mp4",
-    "file:///C:/Users/mercu/Downloads/Tarbes%20%20%20Le%20centre%20de%20sante%CC%81%20Louis%20Lareng%20inaugure%CC%81.mp4",
-    "file:///C:/Users/mercu/Downloads/ToulouseSant%C3%A9%20%20Portrait%20de%20Louis%20Lareng.mp4",
-    "file:///C:/Users/mercu/Downloads/Louis%20Lareng.mp4",
-    "file:///C:/Users/mercu/Downloads/Hommage%20de%20UT3%20au%20Professeur%20Louis%20Lareng%20(23%2001%202018).mp4",
-    "file:///C:/Users/mercu/Downloads/Les%20R%C3%A9actions%20du%20Professeur%20Louis%20Lareng%20(Toulouse).mp4",
-    "file:///C:/Users/mercu/Downloads/Louis%20Lareng%20et%20le%20Samu%20vivre%20dans%20l%E2%80%99urgence.mp4",
-    "file:///C:/Users/mercu/Downloads/T%C3%A9l%C3%A9r%C3%A9gulation%20ambulanci%C3%A8re%201966%20Pr%20Lareng.mp4",
-    "file:///C:/Users/mercu/Downloads/Le%20SAMU%20tout%20neuf%20de%20Toulouse.mp4"
+    "https://www.youtube.com/watch?v=qDL6VmpMAcc",
+    "https://www.youtube.com/watch?v=Y047fBCVA0M",
+    "https://www.youtube.com/watch?v=VhwNpQV_nP0",
+    "https://www.youtube.com/watch?v=0nl_iTzBovs",
+    "https://www.youtube.com/watch?v=r7zFPk2KdWA",
+    "https://www.youtube.com/watch?v=UTWX0QFoZVE",
+    "https://www.youtube.com/watch?v=Z_lHAKkn8Zg",
+    "https://www.youtube.com/watch?v=wk3pGoqxN3Q",
+    "https://www.youtube.com/watch?v=-yjMXqeLEag",
+    "https://www.youtube.com/watch?v=QtMkeag0Hr0"
   ];
 
   const TITLES = [
-    "Entretien — Marie Curie",
-    "Portrait — Nelson Mandela",
-    "Interview — Simone Veil",
-    "Conversation — Albert Einstein",
-    "Témoignage — Rosa Parks",
-    "Portrait — Charles de Gaulle",
-    "Interview — Frida Kahlo",
-    "Entretien — Winston Churchill",
-    "Portrait — Martin Luther King Jr.",
-    "Hommage — Léonard de Vinci"
+    "Vidéo 1","Vidéo 2","Vidéo 3","Vidéo 4","Vidéo 5",
+    "Vidéo 6","Vidéo 7","Vidéo 8","Vidéo 9","Vidéo 10"
   ];
 
-  // DOM
+  // DOM refs (doivent exister dans ton HTML)
   const stage = document.getElementById('stage');
   const screenArea = document.getElementById('screenArea');
-  const player = document.getElementById('player');
+  const player = document.getElementById('player'); // on garde le <video> mais on l'utilise pas pour YouTube
   const thumbsWrap = document.getElementById('thumbsWrap');
   const playOverlay = document.getElementById('playOverlay');
   const overlayPlayBtn = document.getElementById('overlayPlayBtn');
@@ -44,7 +36,6 @@
   const fsBtn = document.getElementById('fsBtn');
   const playPauseBtn = document.getElementById('playPauseBtn');
 
-  // timeline elements
   const seek = document.getElementById('seek');
   const bufferedBar = document.getElementById('bufferedBar');
   const curTimeBar = document.getElementById('curTimeBar');
@@ -54,23 +45,26 @@
   let thumbs = [];
   const STORAGE_VOL_KEY = 'tv_volume_v1';
   let currentVolume = parseFloat(localStorage.getItem(STORAGE_VOL_KEY)) || 0.8;
-  volControl.value = currentVolume;
+  if(volControl) volControl.value = currentVolume;
 
   let isSeeking = false;
+  let currentIframe = null;
+  let usingIframe = false;
 
-  // bloque le scroll global
-  function preventDefault(e){ e.preventDefault(); }
-  window.addEventListener('wheel', preventDefault, { passive:false });
-  window.addEventListener('touchmove', preventDefault, { passive:false });
-  document.addEventListener('keydown', (e) => {
-    const scrollKeys = ['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'];
-    if(scrollKeys.includes(e.code)){
-      const ae = document.activeElement;
-      if(ae === document.body || ae === document.documentElement) e.preventDefault();
-    }
-  }, { passive:false });
+  // helper : parse YouTube ID from URL (watch, youtu.be, embed)
+  function parseYouTubeId(url){
+    if(!url) return null;
+    let m;
+    m = url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+    if(m) return m[1];
+    m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+    if(m) return m[1];
+    m = url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+    if(m) return m[1];
+    return null;
+  }
 
-  // formatage temps
+  // formatage temps (utile pour mp4 si jamais)
   function fmtTime(s){
     if(!isFinite(s)) return '0:00';
     s = Math.floor(s);
@@ -79,23 +73,32 @@
     return `${m}:${String(sec).padStart(2,'0')}`;
   }
 
-  // construction des vignettes
+  // build thumbnails: YouTube => image thumbnail
   function buildThumbs(){
     thumbsWrap.innerHTML = '';
+    thumbs = [];
     SLOTS.forEach((src, i) => {
       const t = document.createElement('button');
       t.className = 'thumb';
       t.dataset.index = i;
       t.title = TITLES[i] || `Vidéo ${i+1}`;
 
-      const vid = document.createElement('video');
-      vid.src = src;
-      vid.muted = true;
-      vid.loop = true;
-      vid.playsInline = true;
-      vid.preload = 'metadata';
-      vid.autoplay = true;
-      vid.className = 'thumb-video';
+      const ytId = parseYouTubeId(src);
+      if(ytId){
+        const img = document.createElement('img');
+        img.className = 'thumb-video thumb-img';
+        img.alt = TITLES[i] || `Vidéo ${i+1}`;
+        // hqdefault.jpg thumbnail
+        img.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        t.appendChild(img);
+      } else {
+        // fallback: show an empty placeholder
+        const placeholder = document.createElement('div');
+        placeholder.style.width = '100%';
+        placeholder.style.height = '100%';
+        placeholder.style.background = '#222';
+        t.appendChild(placeholder);
+      }
 
       const title = document.createElement('span');
       title.className = 'title';
@@ -105,14 +108,12 @@
       badge.className = 'badge';
       badge.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg>';
 
-      t.appendChild(vid);
       t.appendChild(badge);
       t.appendChild(title);
 
       t.addEventListener('click', ()=> onThumbClick(i));
       thumbsWrap.appendChild(t);
-      thumbs.push({button:t, video:vid});
-      vid.play().catch(()=>{/* ignore preview failure */});
+      thumbs.push({button:t, src});
     });
     highlightActive();
   }
@@ -122,58 +123,151 @@
     updatePlayPauseUI();
   }
 
-  // volume wiring
-  volControl.addEventListener('input', (e)=>{
-    currentVolume = parseFloat(e.target.value);
-    localStorage.setItem(STORAGE_VOL_KEY, currentVolume);
-    if(player){
-      player.volume = currentVolume;
-      if(currentVolume > 0) player.muted = false;
-    }
-  });
-
-  // overlay
-  function showOverlay(show){
-    if(show){ playOverlay.classList.add('show'); playOverlay.setAttribute('aria-hidden','false'); }
-    else { playOverlay.classList.remove('show'); playOverlay.setAttribute('aria-hidden','true'); }
+  // show iframe youtube in screenArea
+  function showYouTubeIframe(ytId){
+    removeIframe(); // teardown si présent
+    const iframe = document.createElement('iframe');
+    iframe.id = 'yt-embed';
+    iframe.setAttribute('title', 'YouTube video player');
+    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+    iframe.setAttribute('allowfullscreen', '');
+    // autoplay=1 (peut être bloqué si audio non muté)
+    iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = '0';
+    screenArea.appendChild(iframe);
+    currentIframe = iframe;
+    usingIframe = true;
+    // hide HTML5 video while iframe visible
+    if(player) player.style.display = 'none';
+    // timeline won't work for iframe — reset UI
+    durTimeBar.textContent = '--:--';
+    curTimeBar.textContent = '0:00';
+    bufferedBar.style.width = '0%';
+    seek.value = 0;
+    showOverlay(false);
+    audioControls.style.display = 'flex';
   }
 
-  // lecture d'un slot (tentative audio non muet)
+  function removeIframe(){
+    if(currentIframe){
+      try { currentIframe.remove(); } catch(e){/*ignore*/ }
+      currentIframe = null;
+    }
+    usingIframe = false;
+    if(player) player.style.display = 'block';
+  }
+
+  // play slot: if youtube -> iframe, else (none in this config) do nothing
   function playSlot(i){
     const src = SLOTS[i];
     if(!src) return;
     currentIndex = i;
     highlightActive();
 
-    player.src = src;
-    player.volume = currentVolume;
-    player.muted = false;
-    player.removeAttribute('controls');
-    player.load();
+    const ytId = parseYouTubeId(src);
+    if(ytId){
+      // use iframe embed
+      if(player){
+        // pause HTML5 player if previously used
+        try { player.pause(); } catch(e){}
+      }
+      showYouTubeIframe(ytId);
+    } else {
+      // fallback: nothing
+      console.warn('Source non-YouTube détectée (aucune action)', src);
+    }
+  }
 
-    player.play().then(()=> {
-      showOverlay(false);
-      updatePlayPauseUI();
-    }).catch(err => {
-      console.warn('Autoplay audio blocked — showing overlay', err);
-      player.muted = true;
-      player.play().catch(()=>{/* ignore */});
-      showOverlay(true);
-      updatePlayPauseUI();
-    }).finally(()=> {
-      audioControls.style.display = 'flex';
+  function onThumbClick(i){ playSlot(i); }
+
+  // overlay listener (if user clicks to unmute) — for iframe we can't unmute via overlay
+  overlayPlayBtn && overlayPlayBtn.addEventListener('click', ()=>{
+    showOverlay(false);
+    try {
+      if(usingIframe){
+        // nothing to do — the user must interact with the iframe/player itself
+      } else {
+        player.muted = false;
+        player.volume = currentVolume;
+        player.play().catch(()=>{});
+      }
+    } catch(e){ console.warn(e); }
+  });
+
+  // play/pause UI (for HTML5 video only, for iframe we just focus)
+  function togglePlayPause(){
+    if(usingIframe){
+      if(currentIframe) currentIframe.focus();
+      return;
+    }
+    if(player.paused) player.play().catch(e => console.warn('Play failed', e));
+    else player.pause();
+    updatePlayPauseUI();
+  }
+  function updatePlayPauseUI(){
+    if(!playPauseBtn) return;
+    let isPlaying = false;
+    if(!usingIframe){
+      isPlaying = !!(player.currentTime > 0 && !player.paused && !player.ended && player.readyState > 2);
+    }
+    playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+    playPauseBtn.title = isPlaying ? 'Pause' : 'Lecture';
+  }
+  if(playPauseBtn) playPauseBtn.addEventListener('click', (e)=>{ e.preventDefault(); togglePlayPause(); });
+
+  // keyboard space shortcut
+  document.addEventListener('keydown', (e)=>{
+    const tag = document.activeElement && document.activeElement.tagName.toLowerCase();
+    if(tag === 'input' || tag === 'textarea') return;
+    if(e.code === 'Space'){ e.preventDefault(); togglePlayPause(); }
+  });
+
+  // small helpers for timeline (do nothing for iframe)
+  function updateBuffered(){
+    if(usingIframe){
+      bufferedBar.style.width = '0%';
+      return;
+    }
+    try{
+      const b = player.buffered;
+      if(b && b.length && isFinite(player.duration) && player.duration > 0){
+        const end = b.end(b.length-1);
+        const pct = (end / player.duration) * 100;
+        bufferedBar.style.width = pct + '%';
+      } else bufferedBar.style.width = '0%';
+    }catch(e){ bufferedBar.style.width = '0%'; }
+  }
+
+  // mp4 handlers exist but won't run in this setup; safe to keep minimal behaviour
+  if(player){
+    player.addEventListener('timeupdate', ()=> {
+      if(!isSeeking && !usingIframe && isFinite(player.duration) && player.duration > 0){
+        const pct = (player.currentTime / player.duration) * 100;
+        seek.value = pct;
+        curTimeBar.textContent = fmtTime(player.currentTime);
+      }
+    });
+    player.addEventListener('loadedmetadata', ()=> {
+      if(!usingIframe) durTimeBar.textContent = fmtTime(player.duration);
+      updateBuffered();
+    });
+    player.addEventListener('progress', updateBuffered);
+    player.addEventListener('play', ()=> { if(!player.muted) showOverlay(false); audioControls.style.display='flex'; updatePlayPauseUI(); });
+    player.addEventListener('pause', ()=> updatePlayPauseUI());
+    player.addEventListener('ended', ()=> {
+      const next = (currentIndex + 1) % SLOTS.length;
+      playSlotWithCurtain(next);
     });
   }
 
-  // rideau sequence
+  // curtain sequence (same as ton code)
   function playSlotWithCurtain(i){
-    if(i === currentIndex && !player.paused && !player.muted) return;
     currentIndex = i;
     highlightActive();
-
     const cssDur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--curtain-duration')) || 1.1;
     const durMs = Math.round(cssDur * 1000);
-
     stage.classList.remove('open');
     void stage.offsetHeight;
     setTimeout(()=> {
@@ -182,129 +276,10 @@
     }, durMs + 80);
   }
 
-  // fullscreen helpers
-  function isFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
-  function enterFullscreen(){ const t = screenArea || player; if(t.requestFullscreen) return t.requestFullscreen(); if(t.webkitRequestFullscreen) return t.webkitRequestFullscreen(); }
-  function exitFullscreen(){ if(document.exitFullscreen) return document.exitFullscreen(); if(document.webkitExitFullscreen) return document.webkitExitFullscreen(); }
-  function updateFsButton(){ if(isFullscreen()) { fsBtn.classList.add('fullscreen'); fsBtn.textContent='⤢'; fsBtn.title='Quitter le plein écran'; } else { fsBtn.classList.remove('fullscreen'); fsBtn.textContent='⛶'; fsBtn.title='Plein écran'; } }
-  fsBtn.addEventListener('click',(e)=>{ e.preventDefault(); if(!isFullscreen()) enterFullscreen().catch(()=>{}); else exitFullscreen().catch(()=>{}); });
-  document.addEventListener('fullscreenchange', updateFsButton);
-  document.addEventListener('webkitfullscreenchange', updateFsButton);
-
-  // overlay click: explicit user gesture to play with audio
-  overlayPlayBtn.addEventListener('click', ()=>{
-    showOverlay(false);
-    try { player.muted = false; player.volume = currentVolume; player.play().catch(()=>{}); } catch(e){ console.warn(e); }
-  });
-
-  // click sur vidéo : toggle mute/unmute
-  player.addEventListener('click', ()=> {
-    if(player.muted){ player.muted = false; player.volume = currentVolume; showOverlay(false); }
-    else { player.muted = true; }
-    updatePlayPauseUI();
-  });
-
-  // fin -> suivante
-  player.addEventListener('ended', ()=> {
-    const next = (currentIndex + 1) % SLOTS.length;
-    playSlotWithCurtain(next);
-  });
-
-  // play/pause UI sync
-  player.addEventListener('play', ()=> { if(!player.muted) showOverlay(false); audioControls.style.display='flex'; updatePlayPauseUI(); });
-  player.addEventListener('pause', ()=> updatePlayPauseUI());
-
-  // thumbnail click
-  function onThumbClick(i){ playSlotWithCurtain(i); }
-
-  /* -------- TIMELINE (seek) -------- */
-  // mise à jour du buffered bar
-  function updateBuffered(){
-    try{
-      const b = player.buffered;
-      if(b && b.length && isFinite(player.duration) && player.duration > 0){
-        const end = b.end(b.length-1);
-        const pct = (end / player.duration) * 100;
-        bufferedBar.style.width = pct + '%';
-      } else {
-        bufferedBar.style.width = '0%';
-      }
-    }catch(e){ bufferedBar.style.width = '0%'; }
-  }
-
-  // timeupdate -> mettre à jour seek si pas en train de drag
-  player.addEventListener('timeupdate', ()=> {
-    if(!isSeeking && isFinite(player.duration) && player.duration > 0){
-      const pct = (player.currentTime / player.duration) * 100;
-      seek.value = pct;
-      curTimeBar.textContent = fmtTime(player.currentTime);
-    }
-  });
-
-  // metadata loaded -> durée
-  player.addEventListener('loadedmetadata', ()=> {
-    durTimeBar.textContent = fmtTime(player.duration);
-    updateBuffered();
-  });
-
-  player.addEventListener('progress', updateBuffered);
-
-  // interaction utilisateur sur la seekbar
-  seek.addEventListener('input', (e) => {
-    if(!isFinite(player.duration)) return;
-    const pct = parseFloat(e.target.value);
-    const t = (pct/100) * player.duration;
-    curTimeBar.textContent = fmtTime(t); // preview while dragging
-    isSeeking = true;
-  });
-
-  seek.addEventListener('change', (e) => {
-    if(!isFinite(player.duration)) { isSeeking = false; return; }
-    const pct = parseFloat(e.target.value);
-    const t = (pct/100) * player.duration;
-    player.currentTime = t;
-    isSeeking = false;
-  });
-
-  // clicking directly on the timeline area to jump (optional)
-  document.querySelectorAll('.timeline-area').forEach(area => {
-    area.addEventListener('click', (ev) => {
-      const rect = ev.currentTarget.getBoundingClientRect();
-      const x = ev.clientX - rect.left;
-      const pct = (x / rect.width) * 100;
-      if(isFinite(player.duration) && player.duration>0){
-        player.currentTime = (pct/100) * player.duration;
-      }
-    });
-  });
-
-  /* -------- play / pause control (bottom button) -------- */
-  function togglePlayPause(){
-    if(!player.src) return;
-    if(player.paused) player.play().catch(e => console.warn('Play failed', e));
-    else player.pause();
-    updatePlayPauseUI();
-  }
-  function updatePlayPauseUI(){
-    if(!playPauseBtn) return;
-    const isPlaying = !!(player.currentTime > 0 && !player.paused && !player.ended && player.readyState > 2);
-    playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
-    playPauseBtn.title = isPlaying ? 'Pause' : 'Lecture';
-  }
-  if(playPauseBtn) playPauseBtn.addEventListener('click', (e)=>{ e.preventDefault(); togglePlayPause(); });
-
-  // raccourci espace pour play/pause (empêche scroll)
-  document.addEventListener('keydown', (e)=>{
-    const tag = document.activeElement && document.activeElement.tagName.toLowerCase();
-    if(tag === 'input' || tag === 'textarea') return;
-    if(e.code === 'Space'){ e.preventDefault(); togglePlayPause(); }
-  });
-
-  /* -------- init -------- */
+  // init
   document.addEventListener('DOMContentLoaded', ()=>{
     buildThumbs();
-    player.volume = currentVolume;
-    // ouverture rideaux et tentative de lecture initiale
+    if(player) player.volume = currentVolume;
     setTimeout(()=> {
       stage.classList.add('open');
       const cssDur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--curtain-duration')) || 1.1;

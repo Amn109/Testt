@@ -147,11 +147,11 @@
         align-items: center;
       }
       .nav-btn {
-        background: linear-gradient(180deg, rgba(18,16,14,0.95), rgba(12,10,9,0.95));
+        background: linear-gradient(180deg, rgba(18, 16, 14, 0), rgba(12, 10, 9, 0));
         color: #f6e9d6;
         padding: 8px 12px;
         border-radius: 8px;
-        font-family: Georgia, serif;
+        font-family:Inter, system-ui
         font-size: 13px;
         border: 1px solid rgba(255,255,255,0.03);
         box-shadow: 0 8px 20px rgba(0,0,0,0.5);
@@ -255,13 +255,13 @@
     const btnHome = document.createElement('button');
     btnHome.className = 'nav-btn';
     btnHome.setAttribute('aria-label','Aller à l\'accueil');
-    btnHome.textContent = 'Accueil';
+    btnHome.textContent = '';
     btnHome.addEventListener('click', ()=> { window.location.href = accueilHref; });
 
     const btnChrono = document.createElement('button');
     btnChrono.className = 'nav-btn';
     btnChrono.setAttribute('aria-label','Aller à la chronologie');
-    btnChrono.textContent = 'Chronologie';
+    btnChrono.textContent = '';
     btnChrono.addEventListener('click', ()=> { window.location.href = chronoHref; });
 
     navButtonsContainer.appendChild(btnHome);

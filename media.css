@@ -20,7 +20,7 @@ html,body{
 
 /* NAV */
 .topbar{
-  background: linear-gradient(180deg, #002666, rgba(0,0,0,0.15));
+  background: linear-gradient(180deg, #002666, rgba(0, 0, 0, 0.616));
   padding:10px 18px;
   position:fixed;
   left:0;right:0;top:0;

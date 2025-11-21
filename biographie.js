@@ -1,41 +1,16 @@
-// biographie.js (version mise à jour — textes de biographie longs par tranche d'âge)
+// biographie.js — centre cliquable → affiche biographie Louis Lareng
 (() => {
   // DOM
   const canvas = document.getElementById('scene-canvas');
   const overlay = document.getElementById('bioOverlay');
   const bioClose = document.getElementById('bioClose');
   const bioTitle = document.getElementById('bioTitle');
-  const bioSubtitle = document.getElementById('bioSubtitle');
   const bioText = document.getElementById('bioText');
   const bioImage = document.getElementById('bioImage');
   const bioPrev = document.getElementById('bioPrev');
   const bioNext = document.getElementById('bioNext');
 
-  // --- biographies détaillées par tranche d'âge (FR) ---
-  const BIO_BY_AGE = {
-    "0–5": `Naissance & premiers pas (0–5)
-Né(e) au sein d'un foyer aimant, ces premières années posent les fondations : alimentation, sommeil et premiers repères affectifs. Les tout premiers apprentissages — tenir sa tête, ramper, marcher — sont des victoires quotidiennes. Les interactions rodi parentales façonnent la confiance initiale ; les jeux simples et les histoires racontées éveillent la curiosité. Ces années marquent aussi la découverte du langage : on prime les premiers mots, les rires, et la relation au monde extérieure commence à se dessiner.`,
-    "6–12": `Enfance & apprentissages (6–12)
-L'enfance scolaire commence : école primaire, premières compétences en lecture et calcul, et l'apparition d'intérêts marqués (dessin, musique, sport). C'est une période de construction sociale : amitiés durables se nouent et on apprend le sens du groupe. Les activités extrascolaires enrichissent la personnalité ; l'encouragement des adultes permet l'apparition de talents précoces. On pose les premières bases de la discipline et de la persévérance.`,
-    "13–17": `Adolescence & formation identitaire (13–17)
-Transition majeure : le corps change, les émotions se renforcent et l'identité se confronte au monde. On explore des opinions, des styles, des premières amours, et parfois la rébellion. Les études se complexifient, les choix d'orientation commencent à apparaître, et les relations d'amis prennent une place centrale. Cette tranche forge le sens critique : lectures, projets et premiers engagements associatifs ou créatifs laissent des traces durables.`,
-    "18–24": `Jeune adulte & exploration (18–24)
-Après l'adolescence vient l'autonomie : études supérieures, premiers emplois, voyages et rencontres déterminantes. On expérimente la responsabilité financière et la gestion du quotidien. C'est une période d'expérimentation professionnelle et personnelle : stages, projets, parfois un premier vrai travail. Les choix faits ici — filière d'études, ville, cercle social — orientent la trajectoire des années suivantes.`,
-    "25–34": `Installation & ambition (25–34)
-Carrière en mouvement : progression professionnelle, parfois changement de secteur ou création d'entreprise. Les projets personnels (couple, enfants) s'imbriquent aux ambitions ; gestion du temps et priorités se complexifient. On développe un réseau professionnel solide, on publie, participe à des conférences, construit un portefeuille de réalisations concrètes. Ces années exigent des décisions structurantes qui auront un impact sur la suite.`,
-    "35–44": `Consolidation & réalisation (35–44)
-Période d'aboutissement opérationnelle : leadership, responsabilités managériales, mise en place de systèmes pérennes. On mène des projets de grande échelle, on publie, enseigne ou encadre la génération suivante. Côté personnel, la famille et les engagements associatifs ou sociaux prennent souvent plus de profondeur. C'est aussi une période où l'on commence à penser aux fruits à long terme de ses choix professionnels.`,
-    "45–54": `Pleine maturité & réévaluation (45–54)
-On récolte souvent les fruits d'années de travail — promotions, reconnaissance, résultats tangibles. Mais c'est aussi l'époque de questionnements : "Que reste-t-il à accomplir ?" Les priorités peuvent se réorienter vers l'équilibre vie pro/vie perso, la transmission et la qualité du temps passé avec les proches. Beaucoup lancent des projets de mentorat, changent de cap pour donner plus de sens à leurs actions, ou se spécialisent davantage.`,
-    "60–69": `Âge mûr & transmission (60–69)
-Le regard se tourne vers la transmission : mentorat, écriture de mémoires, ou engagements culturels. La carrière active peut ralentir ; certains prennent leur retraite et transforment leur expertise en activités bénévoles ou artistiques. Les voyages réfléchis, le partage d'expérience et l'archivage de documents personnels deviennent centraux. C'est une période de consolidation de l'héritage intellectuel et affectif.`,
-    "70–79": `Sérénité & transmission approfondie (70–79)
-Temps de recul et de tri des souvenirs : réorganisation des archives personnelles, rencontres intergénérationnelles, et parfois publication d'essais ou de recueils. L'accent se met sur la qualité des relations et sur le partage de savoirs pratiques et d'histoires de vie. On assume davantage les paradoxes d'une trajectoire riche, et on savoure la transmission aux plus jeunes.`,
-    "80+": `Héritage & postérité (80+)
-Bilan final : témoignages, commémorations et réception des hommages. Les récits oraux et les archives (lettres, photos, publications) deviennent essentiels pour la mémoire collective. Les proches organisent la conservation de l'héritage culturel et affectif. Cette dernière période valorise le sens profond des accomplissements et la continuité des valeurs au-delà de la vie.`  
-  };
-
-  // --- THREE setup (optimisé) ---
+  // --- THREE setup ---
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -88,19 +63,19 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   const bench = new THREE.Mesh(new THREE.BoxGeometry(6, 0.18, 1.2), new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.5 }));
   bench.position.set(0, 0.45, 3.2); scene.add(bench);
 
-  // IMAGES (liste inchangée — ton fichier doit fournir ces URLs)
+  // IMAGES (inchangées)
   const IMAGES = [
-    { img: "https://cdn.artphotolimited.com/images/5b9fc1ecac06024957be8806/300x300/salvador-dali-en-1959.jpg", title: "Dali — 1959", desc: "Salvador Dali, 1959." },
-    { img: "https://cdn.shortpixel.ai/spai/q_lossless+w_998+to_auto+ret_img/independent-photo.com/wp-content/uploads/2022/02/download-1.jpeg", title: "Photographie 2", desc: "Photographie contemporaine." },
-    { img: "https://fr.muzeo.com/sites/default/files/styles/image_oeuvre_search/public/oeuvres/photo/guerres_et_anneees_folles/curiosite_en_1930__un_diner_d124931.jpg?itok=t06gFtta", title: "1930 — Dîner", desc: "Scène, 1930." },
-    { img: "https://cdn.artphotolimited.com/images/597620ca681a4e5b29462ebe/300x300/jacques-chirac-en-campagne-electorale-en-correze.jpg", title: "Chirac — campagne", desc: "Jacques Chirac en campagne." },
-    { img: "https://fr.muzeo.com/sites/default/files/styles/image_oeuvre_search/public/oeuvres/photo/la_belle_eepoque/un_vieux_chien_de_mer285217.jpg?itok=ygMN0nr_", title: "Vieux chien", desc: "Photo ancienne." },
-    { img: "https://i.pinimg.com/736x/20/cf/46/20cf4676753ac568ca4189744a032234.jpg", title: "Portrait 6", desc: "Portrait." },
-    { img: "https://www.myposter.fr/magazin/wp-content/uploads/2019/03/audrey-hepburn-392920_1920.jpg", title: "Audrey Hepburn", desc: "Portrait classique." },
-    { img: "https://m.media-amazon.com/images/I/91iCD6xECnL._AC_UF1000,1000_QL80_.jpg", title: "Image 8", desc: "Œuvre moderne." },
-    { img: "https://cdn.shortpixel.ai/spai/q_lossless+w_1003+to_auto+ret_img/independent-photo.com/wp-content/uploads/2019/10/Jacob-Aue-Sobol-7-600x400-1.jpg", title: "Jacob Aue Sobol", desc: "Photographie expressive." },
+    { img: "https://images.ladepeche.fr/api/v1/images/view/5dbef14fd286c20ffc76e545/full/image.jpg?v=1", title: "Photographie", desc: "Louis Lareng" },
+    { img: "https://i.ytimg.com/vi/jLG6HlRHgys/mqdefault.jpg", title: "Photographie 2", desc: "Louis Lareng" },
+    { img: "https://www.char-fr.net/IMG/jpg/cara_lareng_coirier-640x480.jpg", title: "1930 — Photographie 3", desc: "Louis Lareng" },
+    { img: "https://www.char-fr.net/local/cache-vignettes/L672xH461/lareng-serre_1984-f6cee.jpg?1744949566", title: "Photographie 4", desc: "Louis Lareng" },
+    { img: "https://cdn-s-www.dna.fr/images/7AB6C42E-5232-4848-8550-B6CF282F263A/NW_raw/louis-lareng-(au-centre)-avec-jean-jacques-buttiker-responsable-de-l-antenne-de-bartenheim-et-elisabeth-groelly-presidente-departementale-de-la-protection-civile-photos-dna-ghislaine-mougel-1424800907.jpg", title: "Photographie 5", desc: "Louis Lareng" },
+    { img: "https://img.20mn.fr/HUoH0KziQsmP6ay6L2h66g/1444x920_professeur-louis-lareng-invente-samu-1968-toulouse", title: "Photographie 6", desc: "Louis Lareng" },
+    { img: "https://www.char-fr.net/local/cache-vignettes/L672xH461/Lareng-Coirier_1987-ec2e3.jpg?1744932688", title: "Photographie 7", desc: "Louis Lareng" },
+    { img: "https://www.lexpress.fr/resizer/bXur6AlLkP24-yYqt3jRa9NPoRA=/arc-photo-lexpress/eu-central-1-prod/public/UHCOBBLFWNFSJLZPOBORQOMCAA.jpg", title: "Photographie 8", desc: "Louis Lareng" },
+    { img: "https://images.ladepeche.fr/api/v1/images/view/5c2d1e3c3e45463bf42090f1/large/image.jpg", title: "Photographie 9", desc: "Louis Lareng" },
 
-    { img: "https://images.pexels.com/photos/2987101/pexels-photo-2987101.jpeg", title: "Pexels 1", desc: "Nouvelle image (pexels)." },
+    { img: "https://www.grandsudinsolite.fr/client/gfx/photos/produit/01-lareng-1_16373.jpg", title: "Photographie 10", desc: "Louis Lareng" },
     { img: "https://images.pexels.com/photos/20616946/pexels-photo-20616946.jpeg", title: "Pexels 2", desc: "Nouvelle image (pexels)." },
     { img: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg", title: "Pexels 3", desc: "Nouvelle image (pexels)." },
     { img: "https://images.pexels.com/photos/10328983/pexels-photo-10328983.jpeg", title: "Pexels 4", desc: "Nouvelle image (pexels)." },
@@ -109,10 +84,6 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
     { img: "https://www.artenza.fr/cdn/shop/collections/Entre-ombre-et-lumiere-alexandre-lawniczak-collections.jpg?v=1722254963&width=4669", title: "Artenza", desc: "Entre ombre et lumière." },
     { img: "https://cdn.artphotolimited.com/images/60df3a8fbd40b852ce5e0fff/300x300/entre-ciel-et-terre.jpg", title: "Entre ciel & terre", desc: "Photographie." },
     { img: "https://storage.googleapis.com/yk-cdn/photos/cusblack/andrea-pavan/point.jpg", title: "Point", desc: "Photographie moderne." }
-  ];
-
-  const AGE_RANGES = [
-    "25–34", "35–44", "45–54", "18–24", "13–17", "6–12", "0–5", "60–69", "70–79", "80+"
   ];
 
   // placeholder texture
@@ -126,18 +97,7 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   pctx.fillText('Chargement...', placeholderCanvas.width / 2, placeholderCanvas.height / 2);
   const PLACEHOLDER_TEX = new THREE.CanvasTexture(placeholderCanvas);
 
-  // loader robuste (concurrency)
-  const LOAD_CONCURRENCY = 2;
-  const queue = [];
-  let running = 0;
-  function enqueue(task) { queue.push(task); processQueue(); }
-  function processQueue() {
-    if (running >= LOAD_CONCURRENCY) return;
-    const t = queue.shift();
-    if (!t) return;
-    running++;
-    t().finally(() => { running--; processQueue(); });
-  }
+  // loader (voir version précédente pour robustesse)
   function loadImageAsTexture(src, timeoutMs = 9000) {
     return new Promise((resolve, reject) => {
       const img = new Image(); img.crossOrigin = 'anonymous';
@@ -151,9 +111,10 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   function loadTwoPass(url, onThumb, onFull) {
     const cleaned = url.replace(/^https?:\/\//i, '');
     const thumbUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(cleaned) + '&w=360&fit=cover&q=70';
-    enqueue(() => loadImageAsTexture(thumbUrl).then(t => onThumb && onThumb(t)).catch(()=>{}).finally(() => {
-      enqueue(() => loadImageAsTexture(url).catch(() => loadImageAsTexture('https://api.allorigins.win/raw?url=' + encodeURIComponent(url))).catch(() => loadImageAsTexture('https://images.weserv.nl/?url=' + encodeURIComponent(cleaned) + '&w=1600&q=80')).then(t => onFull && onFull(t)).catch(()=>{}));
-    }));
+    // thumb
+    loadImageAsTexture(thumbUrl).then(t => onThumb && onThumb(t)).catch(()=>{});
+    // full
+    loadImageAsTexture(url).then(t => onFull && onFull(t)).catch(()=>{});
   }
 
   // create paintings
@@ -161,7 +122,7 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   const paintingPlanes = [];
   const planeToGroup = new Map();
 
-  function createPainting(data, pos, rotationY = 0, plaqueText = '', ageLabel = '') {
+  function createPainting(data, pos, rotationY = 0, plaqueText = '') {
     const group = new THREE.Group();
     group.position.copy(pos);
     group.rotation.y = rotationY;
@@ -173,7 +134,7 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
     const planeMat = new THREE.MeshBasicMaterial({ map: PLACEHOLDER_TEX, toneMapped: false });
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), planeMat);
     plane.position.set(0, 0, 0);
-    plane.userData = { data, age: ageLabel };
+    plane.userData = { data };
     group.add(plane);
 
     const pcanvas = document.createElement('canvas'); pcanvas.width = 512; pcanvas.height = 96;
@@ -184,20 +145,6 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
     const plaque = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(1.2, w * 0.8), 0.12), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(pcanvas) }));
     plaque.position.set(0, -(h / 2) - 0.14, 0.02);
     group.add(plaque);
-
-    // age plaque (DOM)
-    const ageDom = document.createElement('div'); ageDom.className = 'age-plaque';
-    ageDom.style.position = 'fixed'; ageDom.style.display = 'none';
-    ageDom.style.background = 'rgba(18,18,18,0.9)';
-    ageDom.style.color = '#f6e7d6';
-    ageDom.style.padding = '6px 8px';
-    ageDom.style.fontSize = '13px';
-    ageDom.style.borderRadius = '8px';
-    ageDom.style.boxShadow = '0 8px 20px rgba(0,0,0,0.5)';
-    ageDom.textContent = ageLabel || '';
-    document.body.appendChild(ageDom);
-    group.userData.ageEl = ageDom;
-    group.userData.target = plane;
 
     gallery.add(group);
     paintingPlanes.push(plane);
@@ -214,31 +161,69 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   let iImg = 0;
   const backStartX = -12.0, backStep = 6.7;
   for (let i = 0; i < 4 && iImg < IMAGES.length; i++, iImg++) {
-    createPainting(IMAGES[iImg], new THREE.Vector3(backStartX + i * backStep, 2.6, -8.9), 0, IMAGES[iImg].title, AGE_RANGES[iImg] || '');
+    createPainting(IMAGES[iImg], new THREE.Vector3(backStartX + i * backStep, 2.6, -8.9), 0, IMAGES[iImg].title);
   }
   for (let i = 0; i < 3 && iImg < IMAGES.length; i++, iImg++) {
-    createPainting(IMAGES[iImg], new THREE.Vector3(-13.4, 2.6, -4.0 + i * 3.2), Math.PI / 2, IMAGES[iImg].title, AGE_RANGES[4 + i] || '');
+    createPainting(IMAGES[iImg], new THREE.Vector3(-13.4, 2.6, -4.0 + i * 3.2), Math.PI / 2, IMAGES[iImg].title);
   }
   for (let i = 0; i < 3 && iImg < IMAGES.length; i++, iImg++) {
-    createPainting(IMAGES[iImg], new THREE.Vector3(13.4, 2.6, -4.0 + i * 3.2), -Math.PI / 2, IMAGES[iImg].title, AGE_RANGES[7 + i] || '');
+    createPainting(IMAGES[iImg], new THREE.Vector3(13.4, 2.6, -4.0 + i * 3.2), -Math.PI / 2, IMAGES[iImg].title);
   }
 
-  // wall headers (DOM)
-  function makeLabel(text) {
-    const el = document.createElement('div'); el.className = 'wall-header';
-    el.style.position = 'fixed'; el.style.display = 'none';
-    el.style.background = 'rgba(18,18,18,0.9)';
-    el.style.color = '#f6e7d6';
-    el.style.padding = '8px 10px';
-    el.style.borderRadius = '8px';
-    el.style.fontSize = '14px';
-    el.style.boxShadow = '0 8px 20px rgba(0,0,0,0.45)';
-    el.textContent = text; document.body.appendChild(el); return el;
-  }
-  const headerBack = makeLabel('Adulte');
-  const headerLeft = makeLabel('Enfance');
-  const headerRight = makeLabel('Âgé');
-  const headerPositions = { back: new THREE.Vector3(0, 4.6, -9.1), left: new THREE.Vector3(-14.6, 4.6, -0.8), right: new THREE.Vector3(14.6, 4.6, -0.8) };
+  // --- IDENTIFIER le tableau central et lui associer la fiche Louis Lareng ---
+  // compute nearest painting to center back wall (0,2.6,-8.9)
+  (function bindCenterToLareng() {
+    const centerWorld = new THREE.Vector3(0, 2.6, -8.9);
+    let best = null; let bestD = Infinity;
+    paintingPlanes.forEach(p => {
+      const w = new THREE.Vector3(); p.getWorldPosition(w);
+      const d = w.distanceTo(centerWorld);
+      if (d < bestD) { bestD = d; best = p; }
+    });
+    if (!best) return;
+    const larengDesc = `
+<p><strong>Louis Lareng</strong>, né le 8 avril 1923 à Ayzac-Ost (Hautes-Pyrénées) et mort le 3 novembre 2019 à Toulouse, est un professeur agrégé de médecine spécialiste en anesthésie réanimation et homme politique français.</p>
+
+<p>Il est le fondateur du service d'aide médicale urgente (SAMU) avec le docteur Madeleine Bertrand. Le service du SAMU fait son apparition pour la première fois sous cette appellation dans un compte rendu de commission administrative des hôpitaux de Toulouse en 1968.</p>
+
+<p>Il sera officialisé en 1986 lorsque Louis Lareng en tant que député fera adopter la loi « Lareng ».</p>
+
+<p>Il a étudié à la faculté de médecine de Toulouse, et longtemps exercé à l'Hôpital de Purpan. Il est aussi président de la société européenne de télémédecine et e-S@nté, et membre du comité exécutif de la société internationale de télémédecine.</p>
+
+<p>Il fut également président de la Fédération nationale de protection civile pendant 18 ans (1991 à 2009) et a présidé l'association départementale de protection civile de Haute-Garonne.</p>
+
+<ul>
+<li>Licencié en sciences biologiques en 1953.</li>
+<li>Docteur en médecine depuis 1955.</li>
+<li>Professeur d'anesthésie réanimation depuis 1961.</li>
+<li>Fondateur du SAMU en 1967.</li>
+<li>Président de l'université Paul-Sabatier de 1970 à 1976.</li>
+<li>Maire d'Ayzac-Ost de 1965 à 1977.</li>
+<li>Député de la 3e circonscription de la Haute-Garonne de 1981 à 1986 (groupe socialiste).</li>
+</ul>
+
+<p>Distinctions :</p>
+<ul>
+<li>1969 : Officier de l'ordre national du Mérite</li>
+<li>1976 : Commandeur de l'ordre des Palmes académiques</li>
+<li>2016 : Grand officier de la Légion d'honneur</li>
+</ul>
+
+<p>Publications et ouvrages : études et contributions majeures listées dans l'historique professionnel.</p>
+
+<p>Le bâtiment abritant le SAMU 31 à l'hôpital Purpan de Toulouse s'appelle « Pavillon Louis Lareng ». Le 30 mars 2013, France 3 Midi-Pyrénées diffusa un documentaire hommage intitulé « Louis Lareng, 40 ans au pied de l'arbre ».</p>
+
+<p>La promotion 2020-2021 des élèves directeurs d'hôpital en formation à l'EHESP a pris le nom de Louis Lareng. Une des stations du Téléo, le téléphérique urbain de Toulouse, porte le nom de <em>Hôpital Rangueil - Louis Lareng</em>.</p>
+    `;
+    // override the painting's data so that clicking it opens Lareng's fiche
+    best.userData.data = {
+      img: 'https://www.char-fr.net/IMG/jpg/cara_lareng_coirier-640x480.jpg',
+      title: 'Louis Lareng (1923–2019)',
+      desc: larengDesc
+    };
+    // optional: mark it for debug
+    best.userData.isCenter = true;
+  })();
 
   // raycast + hover
   const ray = new THREE.Raycaster(); const pointer = new THREE.Vector2();
@@ -270,7 +255,6 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   function focusOnPlane(plane) {
     if (!plane || animating) return;
     const data = plane.userData.data;
-    const age = plane.userData.age || '';
     const world = new THREE.Vector3(); plane.getWorldPosition(world);
     const q = plane.getWorldQuaternion(new THREE.Quaternion());
     const normal = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
@@ -287,17 +271,16 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
       onUpdate: () => { camera.position.set(from.x, from.y, from.z); controls.target.set(from.tx, from.ty, from.tz); camera.lookAt(from.tx, from.ty, from.tz); },
       onComplete: () => {
         controls.enabled = true; animating = false;
-        showOverlayWithData(data, age);
+        showOverlayWithData(data);
         activePlane = plane;
       }
     });
   }
 
-  function showOverlayWithData(data, ageLabel) {
+  function showOverlayWithData(data) {
     bioTitle.textContent = data.title || 'Titre';
-    bioSubtitle.textContent = ageLabel || '';
-    const bio = (ageLabel && BIO_BY_AGE[ageLabel]) ? BIO_BY_AGE[ageLabel] : (data.desc || '');
-    bioText.textContent = bio;
+    // use innerHTML to preserve paragraph formatting for the long bio
+    bioText.innerHTML = data.desc || '';
     bioImage.src = data.img || '';
     overlay.setAttribute('aria-hidden', 'false'); overlay.style.pointerEvents = 'auto';
   }
@@ -362,46 +345,10 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
     }, 420);
   });
 
-  // convert world to screen position
-  function worldToScreenPos(vec3, camera) {
-    const v = vec3.clone();
-    v.project(camera);
-    return { x: (v.x + 1) * 0.5 * window.innerWidth, y: (1 - (v.y + 1) * 0.5) * window.innerHeight, z: v.z };
-  }
-
-  // position wall headers & age plaques each frame
-  function updateLabelsAndAge() {
-    const headers = [
-      { el: headerBack, pos: headerPositions.back },
-      { el: headerLeft, pos: headerPositions.left },
-      { el: headerRight, pos: headerPositions.right }
-    ];
-    headers.forEach(entry => {
-      const sc = worldToScreenPos(entry.pos, camera);
-      if (sc.z > 1 || sc.z < -1) { entry.el.style.display = 'none'; return; }
-      entry.el.style.display = 'block';
-      entry.el.style.left = Math.round(sc.x) + 'px';
-      entry.el.style.top = Math.round(sc.y) + 'px';
-    });
-
-    planeToGroup.forEach((group) => {
-      const el = group.userData.ageEl;
-      const target = group.userData.target;
-      if (!el || !target) return;
-      const world = new THREE.Vector3(); target.getWorldPosition(world); world.y += 0.78;
-      const sc = worldToScreenPos(world, camera);
-      if (sc.z > 1 || sc.z < -1) { el.style.display = 'none'; return; }
-      el.style.display = 'block';
-      el.style.left = Math.round(sc.x) + 'px';
-      el.style.top = Math.round(sc.y) + 'px';
-    });
-  }
-
   // animate
   function animate() {
     requestAnimationFrame(animate);
     updateHover();
-    updateLabelsAndAge();
     controls.update();
     renderer.render(scene, camera);
   }
@@ -419,6 +366,6 @@ Bilan final : témoignages, commémorations et réception des hommages. Les réc
   animate();
 
   // debug
-  window._GALLERY = { paintingPlanes, planeToGroup, IMAGES, AGE_RANGES, BIO_BY_AGE };
+  window._GALLERY = { paintingPlanes, planeToGroup, IMAGES };
 
 })();

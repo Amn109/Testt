@@ -54,16 +54,95 @@
 
   // ---------- Archive ITEMS (title, year, text, image) ----------
   const ITEMS = [
-    { title:"Louis Lareng, l'inventeur du samu", year:2012, text:"Le professeur et son équipe devant un hélicoptère du Samu. Dans son bureau à l'agence régionale de santé, à Toulouse, le professeur Louis Lareng a accroché les Pyrénées dans son dos. «C'est une photo du pic du Gar. C'est beau, n'est-ce pas, avec cette lumière ?», demande-il.A 89 ans, le professeur Louis Lareng porte beau. Il a toujours un agenda de ministre, se lève à 5 h30 et quitte le bureau après 20 h. «Avant, c'était minuit», précise-t-il. L'homme est en forme aussi. «Le seul fait d'être actif et d'avoir une vie stimulante me maintient en bonne santé.»Le professeur et son équipe devant un hélicoptère du Samu. Dans son bureau à l'agence régionale de santé, à Toulouse, le professeur Louis Lareng a accroché les Pyrénées dans son dos. «C'est une photo du pic du Gar. C'est beau, n'est-ce pas, avec cette lumière ?», demande-il.A 89 ans, le professeur Louis Lareng porte beau. Il a toujours un agenda de ministre, se lève à 5 h30 et quitte le bureau après 20 h. «Avant, c'était minuit», précise-t-il. L'homme est en forme aussi. «Le seul fait d'être actif et d'avoir une vie stimulante me maintient en bonne santé.»Le professeur et son équipe devant un hélicoptère du Samu. Dans son bureau à l'agence régionale de santé, à Toulouse, le professeur Louis Lareng a accroché les Pyrénées dans son dos. «C'est une photo du pic du Gar. C'est beau, n'est-ce pas, avec cette lumière ?», demande-il.A 89 ans, le professeur Louis Lareng porte beau. Il a toujours un agenda de ministre, se lève à 5 h30 et quitte le bureau après 20 h. «Avant, c'était minuit», précise-t-il. L'homme est en forme aussi. «Le seul fait d'être actif et d'avoir une vie stimulante me maintient en bonne santé.»Le professeur et son équipe devant un hélicoptère du Samu. Dans son bureau à l'agence régionale de santé, à Toulouse, le professeur Louis Lareng a accroché les Pyrénées dans son dos. «C'est une photo du pic du Gar. C'est beau, n'est-ce pas, avec cette lumière ?», demande-il.A 89 ans, le professeur Louis Lareng porte beau. Il a toujours un agenda de ministre, se lève à 5 h30 et quitte le bureau après 20 h. «Avant, c'était minuit», précise-t-il. L'homme est en forme aussi. «Le seul fait d'être actif et d'avoir une vie stimulante me maintient en bonne santé.»", image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg" },
-    { title:"", year:"", text:"Lareng, ce nom est désormais associé à la création du Samu (Service d'aide médicale urgente) à Toulouse. C'était en 1967. «Mais, j'ai commencé à y travailler dès 1955. Ce sont les accidents de la route qui m'ont amené à créer ce service car ils devenaient de plus en plus nombreux. Au départ, le Samu n'existait que deux heures par jour, de 17 h à 19h. Cela correspondait à la sortie des usines. Puis, les accidents de la route ont augmenté, il a fallu augmenter les gardes en conséquence. En 1968, une circulaire disait qu'on mettait en place, à Toulouse, un service expérimental de réanimation d'urgence qui adapterait les soins aux besoins. En 1981, quand j'étais député, j'ai présenté une loi qui prévoyait que ce soit le préfet qui mette en place le Samu dans son département.» En 1986, ce système est étendu à toute la France.", image: "https://upload.wikimedia.org/wikipedia/commons/7/78/Nelson_Mandela_1994.jpg" },
-    { title:"Interview — Simone Veil", year:1979, text:"Interview sur mémoire et politique, contexte et extraits.", image: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Simone_Veil_1974.jpg" },
-    { title:"Conversation — Albert Einstein", year:1921, text:"Conversation informelle sur science, société et philosophie.", image: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Albert_Einstein_1921.jpg" },
-    { title:"Témoignage — Rosa Parks", year:1955, text:"Récit et témoignage sur la ségrégation et la désobéissance civile.", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Rosa_Parks_%28GPN-2004-00023%29.jpg" },
-    { title:"Portrait — Charles de Gaulle", year:1959, text:"Discours et contexte historique — notes d'archives.", image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Charles_de_Gaulle_1960.jpg" },
-    { title:"Interview — Frida Kahlo", year:1941, text:"Fragments d'entretien, journaux et notes personnelles.", image: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Frida_Kahlo_%281934%29.jpg" },
-    { title:"Entretien — Winston Churchill", year:1946, text:"Réflexions et mémoires après-guerre.", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Churchill_portrait_NYP_45063.jpg" },
-    { title:"Portrait — Martin Luther King Jr.", year:1963, text:"Extrait de discours et dossier de presse.", image: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Martin_Luther_King,_Jr..jpg" },
-    { title:"Hommage — Léonard de Vinci", year:1505, text:"Archives et annotations sur l'oeuvre et la correspondance.", image: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Leonardo_da_Vinci_-_presumed_self-portrait_-_WGA12798.jpg" }
+
+  {
+    title: "Louis Lareng, l'inventeur du samu",
+    year: 2012,
+    text: `Louis Lareng, né le 8 avril 1923 dans les Hautes-Pyrénées, a consacré sa vie à l'urgence médicale. Orphelin de mère et élevé par sa tante, il obtient une bourse qui lui permet d'étudier la médecine à Toulouse. Spécialisé en anesthésie-réanimation, il devient le premier professeur d'anesthésie-réanimation en France et exerce à l'hôpital Purpan.
+
+Confronté à l'augmentation des accidents de la route, Lareng met en place dès 1955 un dispositif d'intervention d'urgence qui aboutit à la création du SAMU à Toulouse en 1967. Une circulaire de 1968 officialise l'expérimentation ; en 1981, devenu député, il propose une loi permettant au préfet d'organiser le SAMU dans chaque département. Le système est généralisé à toute la France en 1986.
+
+Toujours actif et à l'avant-garde, Lareng s'investit ensuite dans la télémédecine et le dossier de santé numérique pour améliorer le bien-être des patients et des soignants. Marié depuis 1952 à Marie-Blanche, professeure en bactériologie, il est père de trois enfants. Distingué par de nombreuses décorations, un Prix Louis Lareng a été créé pour récompenser les contributions en télémédecine et e-santé.`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Le nouveau combat de Louis Lareng",
+    year: 2014,
+    text: `Recréer du lien social distendu dans nos sociétés, notamment urbaines. Tel est le leitmotiv du professeur Louis Lareng. Après avoir fondé le SAMU, cet ancien professeur de médecine âgé de 91 ans s’est trouvé un nouveau combat. «Il s’agit de permettre aux populations les plus fragiles de pouvoir reprendre en main leur destin,» dit-il. Pour ce faire, il a le projet de créer ce qu’il appelle un «carrefour de Citoyenneté-institut du Lien social». Récemment, il avait convié à l’IFRASS de Toulouse, (Institut de formation, de recherche, d’animation, santé Sociale), sous le haut patronage de Mme Escoffier, ministre chargée de la Décentralisation, l’ensemble des acteurs régionaux, participant au développement, à la transmission des connaissances et à l’accompagnement des populations fragilisées (personnes âgées, familles monoparentales, handicapés…), pour leur proposer la création du Carrefour de Citoyenneté - Institut du Lien Social.
+Cet Institut de formation, dont les contours restent à dessiner par un groupe de travail formé avec les décideurs et acteurs, a pour vocation de promouvoir des formations adaptées aux réalités, et de ce fait, spécifiques, pour les aidants bénévoles et professionnels participant au maintien et au développement du lien social.
+«Aujourd’hui, les bouleversements sociétaux perturbent les relations entre les hommes, le chacun pour soi remplaçant le vivre-ensemble. On devient de plus en plus consommateur de République plutôt que de Citoyenneté» explique Louis Lareng. Il faut, selon lui, se mobiliser en faveur ce projet novateur dans lequel l’enseignement de «la pratique de l’accompagnement» sera capable de répondre à la «France qui souffre».
+Soulignant l’ambition et la générosité de son projet, Mme Escoffier a assuré de son soutien total dans la mise en œuvre de cet Institut du Lien social.
+La Dépêche du Midi
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Création du SAMU et aide médicale urgente",
+    year: 2014,
+    text: `Louis Lareng a transformé l’aide médicale d’urgence en France en initiant, à Toulouse, le premier Service d’Aide Médicale Urgente (SAMU). Face à l’augmentation des accidents de la route, il a développé l’idée de porter les soins d’urgence directement sur les lieux de l’accident, avec une régulation médicale centralisée par téléphone. Ce dispositif novateur a permis d’orienter en temps réel les secours adaptés et de sauver de nombreuses vies. Après une phase expérimentale, Lareng a porté l’initiative au niveau législatif afin qu’elle soit étendue progressivement à l’ensemble du pays, donnant naissance au réseau national des SAMU tel qu’on le connaît aujourd’hui.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Engagement politique et action locale",
+    year: 2014,
+    text: `Parallèlement à sa carrière médicale, Louis Lareng s’est investi en politique locale et nationale. Il a exercé des mandats municipaux et régionaux et a été député, ce qui lui a permis de défendre la structuration de la médecine d’urgence au plus haut niveau. À l’Assemblée, il a œuvré pour des textes et des dispositifs permettant le déploiement du SAMU dans tous les départements. Homme ancré dans sa région, il a souvent refusé des propositions parisiennes pour rester à Toulouse et poursuivre des projets de santé publique locaux.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Innovations en télémédecine et e-santé",
+    year: 2014,
+    text: `Pionnier de la télémédecine, Lareng a très tôt perçu le potentiel des échanges d’images et de données pour améliorer l’accès aux soins dans les zones isolées. Il a contribué à la création d’institutions et de réseaux régionaux dédiés à la téléconsultation et a défendu l’idée que la télémédecine est un acte médical à part entière. Son action a favorisé la mise en place d’outils permettant à un médecin local de confronter un cas à des spécialistes distants, améliorant ainsi la prise en charge des patients éloignés des centres hospitaliers.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Parcours personnel et formation",
+    year: 2014,
+    text: `Né dans les Hautes-Pyrénées, Louis Lareng a connu une enfance marquée par des difficultés familiales puis par le soutien d’un instituteur et d’une tante qui lui a permis d’accéder aux études. Après une formation médicale à Toulouse, il s’est spécialisé en anesthésie-réanimation, discipline émergente à l’époque. Il a mené de front une carrière hospitalière et universitaire, devenant professeur et assumant des responsabilités académiques, tout en menant des actions concrètes sur le terrain hospitalier.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Distinctions et honneurs",
+    year: 2014,
+    text: `Au fil de sa carrière, Lareng a reçu de nombreuses distinctions civiles et professionnelles en reconnaissance de son apport à la médecine d’urgence et à l’innovation en santé. Son engagement a été salué par des hommages institutionnels et par la création d’un prix portant son nom, destiné à récompenser des contributions significatives en télémédecine et en e-santé. Plusieurs bâtiments et structures locales ont également été nommés en son honneur, témoignant de son empreinte durable.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Engagement dans la Protection Civile",
+    year: 2014,
+    text: `En complément du développement du SAMU, Lareng a participé activement à la structuration de la Protection Civile, promouvant le bénévolat de secours et la coordination des acteurs civiques et médicaux. Son action a contribué à fédérer des associations locales et à renforcer les capacités d’intervention citoyennes, notamment en période de crise. Il a ainsi soutenu le développement d’un réseau de volontaires formés pour assister les services d’urgence.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Le nouveau combat de Louis Lareng",
+    year: 2014,
+    text: `Recréer du lien social distendu dans nos sociétés, notamment urbaines. Tel est le leitmotiv du professeur Louis Lareng. Après avoir fondé le SAMU, cet ancien professeur de médecine âgé de 91 ans s’est trouvé un nouveau combat. «Il s’agit de permettre aux populations les plus fragiles de pouvoir reprendre en main leur destin,» dit-il. Pour ce faire, il a le projet de créer ce qu’il appelle un «carrefour de Citoyenneté-institut du Lien social». Récemment, il avait convié à l’IFRASS de Toulouse, (Institut de formation, de recherche, d’animation, santé Sociale), sous le haut patronage de Mme Escoffier, ministre chargée de la Décentralisation, l’ensemble des acteurs régionaux, participant au développement, à la transmission des connaissances et à l’accompagnement des populations fragilisées (personnes âgées, familles monoparentales, handicapés…), pour leur proposer la création du Carrefour de Citoyenneté - Institut du Lien Social.
+Cet Institut de formation, dont les contours restent à dessiner par un groupe de travail formé avec les décideurs et acteurs, a pour vocation de promouvoir des formations adaptées aux réalités, et de ce fait, spécifiques, pour les aidants bénévoles et professionnels participant au maintien et au développement du lien social.
+«Aujourd’hui, les bouleversements sociétaux perturbent les relations entre les hommes, le chacun pour soi remplaçant le vivre-ensemble. On devient de plus en plus consommateur de République plutôt que de Citoyenneté» explique Louis Lareng. Il faut, selon lui, se mobiliser en faveur ce projet novateur dans lequel l’enseignement de «la pratique de l’accompagnement» sera capable de répondre à la «France qui souffre».
+Soulignant l’ambition et la générosité de son projet, Mme Escoffier a assuré de son soutien total dans la mise en œuvre de cet Institut du Lien social.
+La Dépêche du Midi
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Hommages et postérité",
+    year: 2014,
+    text: `La disparition de Louis Lareng a suscité de nombreux hommages. Les institutions locales et nationales ont salué sa vision humaniste et son souci constant que le progrès bénéficie aux patients. Son modèle pour l’organisation des urgences et son engagement pour la télémédecine ont laissé une postérité institutionnelle et scientifique : le réseau des SAMU, des initiatives régionales de télé-santé et des prix académiques perpétuent son œuvre.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
+  {
+    title: "Portrait du visionnaire",
+    year: 2014,
+    text: `Louis Lareng était perçu comme un humaniste et un visionnaire, animé par l’idée que la médecine doit être accessible et utile à tous. Même après des décennies d’activité, il est resté proche du terrain, attentif à l’innovation et fidèle à ses racines régionales. Sa réputation combine exigence professionnelle, inventivité organisationnelle et simplicité humaine, qualités qui expliquent l’influence durable de son travail sur la médecine d’urgence et la santé numérique.
+`,
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Marie_Curie_c1920.jpg"
+  },
   ];
 
   // ---------- make book visuals (canvas textures) ----------

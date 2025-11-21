@@ -1,10 +1,10 @@
-/* Biographie — galerie murale moderne (styles overlay + labels) */
+/* Biographie — galerie murale moderne (styles overlay) */
 * { box-sizing: border-box; }
 html,body { height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#060405; color:#fff; overflow:hidden; }
 
 .topbar {
   position:fixed; left:0; right:0; top:0; height:64px; display:flex; align-items:center;
-  background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.35)); z-index:60; padding:0 18px;
+  background:linear-gradient(180deg, #002666, rgba(0,0,0,0.35)); z-index:60; padding:0 18px;
   box-shadow:0 8px 24px rgba(0,0,0,0.5);
 }
 .nav-inner { width:1200px; max-width:96%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
@@ -16,68 +16,74 @@ html,body { height:100%; margin:0; font-family:Inter, system-ui, -apple-system, 
   position:fixed; left:0; right:0; top:64px; bottom:0; width:100%; height:calc(100% - 64px); display:block;
 }
 
-/* overlay sheet (biography) */
+/* overlay sheet (biography) - style moderne */
 .bio-overlay {
   position:fixed; inset:0; display:flex; align-items:flex-end; justify-content:center;
   pointer-events:none; z-index:180; padding:28px;
   background:linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.45) 60%);
 }
-.bio-overlay[aria-hidden="false"] { pointer-events:auto; background:linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.65)); }
+.bio-overlay[aria-hidden="false"] { pointer-events:auto; background:linear-gradient(180deg, rgba(0,0,0,0.20), rgba(0,0,0,0.75)); }
 
 .bio-sheet {
-  width:min(1100px, 96%); max-width:1100px; height:min(540px, 70%);
-  background:linear-gradient(180deg,#0f1112,#0b0b0b); border-radius:12px; display:flex; gap:18px; padding:18px;
-  box-shadow:0 30px 120px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.03); transform:translateY(28px); opacity:0;
+  width:min(1100px, 96%); max-width:1100px; height:min(620px, 76%);
+  /* glass-like */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px; display:flex; gap:18px; padding:18px;
+  box-shadow:0 40px 140px rgba(0,0,0,0.75);
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px) saturate(120%);
+  transform:translateY(28px); opacity:0;
+  position:relative;
+  overflow:hidden;
 }
 .bio-overlay[aria-hidden="false"] .bio-sheet { transform:translateY(0); opacity:1; transition: all 420ms cubic-bezier(.2,.9,.2,1); }
 
-.bio-left { flex:0 0 44%; display:flex; align-items:center; justify-content:center; }
-.bio-left img { width:100%; height:100%; object-fit:cover; border-radius:8px; box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+.bio-left { flex:0 0 44%; display:flex; align-items:center; justify-content:center; padding:6px; }
+.bio-image-wrap {
+  width:100%; height:100%; border-radius:10px; overflow:hidden; position:relative;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.45), 0 20px 60px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.bio-left img { width:100%; height:100%; object-fit:cover; display:block; transform-origin:center; }
 
-.bio-right { flex:1 1 auto; color:#e9e6e0; display:flex; flex-direction:column; }
-.bio-right h2 { margin:0 0 6px; font-family:"Playfair Display", Georgia, serif; color:#f9e6c8; font-size:24px; }
-.subtitle { color:#cfc8bf; font-size:13px; margin-bottom:12px; font-weight:600; background:rgba(255,255,255,0.03); display:inline-block; padding:6px 8px; border-radius:6px; }
-.bio-text { flex:1; font-size:15px; line-height:1.7; color:#ddd; overflow:auto; padding-right:6px; margin-top:6px; border-top:1px solid rgba(255,255,255,0.02); padding-top:14px }
+.bio-right { flex:1 1 auto; color:#e9e6e0; display:flex; flex-direction:column; padding:8px 6px; }
+.bio-right h2 { margin:0 0 8px; font-family:"Playfair Display", Georgia, serif; color:#fffbf5; font-size:26px; letter-spacing:0.2px; }
+.bio-text { flex:1; font-size:15px; line-height:1.6; color:#e7e3df; overflow:auto; padding-right:6px; margin-top:4px; border-top:1px solid rgba(255,255,255,0.02); padding-top:12px }
+
+/* scrollbar soignée */
+.bio-text::-webkit-scrollbar { width:10px; height:8px; }
+.bio-text::-webkit-scrollbar-thumb { background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius:10px; border: 2px solid rgba(0,0,0,0.2); }
+.bio-text::-webkit-scrollbar-track { background: rgba(255,255,255,0.01); }
+
+/* actions */
 .bio-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
-.btn { background:#202326; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; }
-.btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.5); }
+.btn { background:#121316; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow: 0 8px 22px rgba(0,0,0,0.45); }
+.btn:hover { transform:translateY(-3px); box-shadow:0 18px 40px rgba(0,0,0,0.6); }
 
-.bio-close { position:absolute; right:36px; top:28px; z-index:200; background:#b84b42; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; }
+.bio-close { position:absolute; right:32px; top:22px; z-index:200; background:linear-gradient(180deg,#ff6b6b,#c93b3b); color:#fff; border:0; padding:8px 12px; border-radius:10px; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
 
 body.cursor-pointer { cursor: pointer; }
 
-/* age/section labels (inlined DOM elements created by JS) */
-.wall-header {
-  pointer-events:none;
-  background:rgba(0,0,0,0.65);
-  color:#fff;
-  padding:8px 12px;
-  border-radius:8px;
-  font-weight:600;
-  font-size:13px;
-  box-shadow:0 4px 18px rgba(0,0,0,0.45);
-  transform:translate(-50%,-50%);
-}
-
-/* age small plaques attached to each painting (created by JS) */
-.age-plaque {
-  pointer-events:none;
-  background:rgba(0,0,0,0.65);
-  color:#fff;
-  padding:6px 8px;
-  border-radius:6px;
-  font-size:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.45);
-  transform:translate(-50%,-100%);
-}
-
-/* small hint in lower-left */
+/* hint */
 .hint-mini { position:fixed; left:18px; bottom:18px; z-index:40; background:rgba(255,255,255,0.92); color:#111; padding:8px 10px; border-radius:8px; box-shadow:0 8px 30px rgba(0,0,0,0.25); font-size:13px }
 
 /* responsive */
 @media (max-width:900px){
-  .bio-sheet { flex-direction:column; height:min(72%, 640px); }
+  .bio-sheet { flex-direction:column; height:min(80%, 760px); }
   .bio-left { flex:0 0 auto; height:44%; width:100%; }
   .bio-right { padding-top:8px; }
   .bio-close { right:16px; top:12px; }
+}
+
+.credits {
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  font-size:12px;
+  color:#000000;
+  background: rgba(255, 255, 255, 0);
+  padding:8px 10px;
+  border-radius:8px;
+  pointer-events:none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.36);
 }

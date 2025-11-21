@@ -146,7 +146,7 @@ La Dépêche du Midi
   ];
 
   // ---------- make book visuals (canvas textures) ----------
-  function makeBookTexture(title, color='#b57a6b'){
+  function makeBookTexture(title, color='#b57a6b' ){
     const w=800,h=1100;
     const c=document.createElement('canvas'); c.width=w; c.height=h;
     const ctx=c.getContext('2d');

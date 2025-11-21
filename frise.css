@@ -1,0 +1,128 @@
+/* frise.css - repère minimal, discret et responsive */
+.site-timeline {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 18px;
+  z-index: 220; /* au-dessus de la plupart des éléments */
+  pointer-events: auto;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* container list */
+.timeline-list {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 8px 12px;
+  background: rgba(8,8,8,0.45);
+  border-radius: 999px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.03);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+/* connecting line behind dots */
+.timeline-list::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(18px + 24px); /* visually behind the dots */
+  width: calc(100% + 40px);
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* each dot wrapper */
+.timeline-list li {
+  position: relative;
+  z-index: 2;
+}
+
+/* dot link style */
+.timeline-list a {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
+  position: relative;
+}
+
+/* tooltip shown on hover */
+.timeline-list a::before {
+  content: attr(data-title);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  bottom: calc(100% + 10px);
+  background: rgba(20,20,20,0.95);
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+}
+
+/* arrow pointer on tooltip */
+.timeline-list a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 2px);
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  transform-origin: center;
+  transform: translateX(-50%) rotate(45deg);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+}
+
+/* hover/focus shows tooltip and slightly enlarge */
+.timeline-list a:hover,
+.timeline-list a:focus {
+  transform: scale(1.25);
+  background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.18));
+  outline: none;
+}
+.timeline-list a:hover::before,
+.timeline-list a:focus::before,
+.timeline-list a:hover::after,
+.timeline-list a:focus::after {
+  opacity: 1;
+}
+
+/* active/current page */
+.timeline-list a.active {
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(180deg, #006CFE, #006CFE);
+  box-shadow: 0 10px 30px rgba(255,160,80,0.12), 0 4px 12px rgba(0,0,0,0.6);
+  transform: scale(1.2);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* small screens: compress */
+@media (max-width: 520px) {
+  .timeline-list { gap: 10px; padding: 6px 8px; }
+  .timeline-list a { width: 10px; height: 10px; }
+  .timeline-list a.active { width: 12px; height: 12px; }
+  .timeline-list a::before { display: none; } /* no tooltips on tiny screens */
+  .timeline-list::before { display: none; }
+}

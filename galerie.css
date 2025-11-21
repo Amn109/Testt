@@ -430,7 +430,7 @@ body.entered .art-lights .art-light:nth-child(3) .beam{ opacity:0.68; transform:
 .overlay-title{ font-family: 'Georgia', serif; font-size:40px; letter-spacing:3px; margin:0; color:#fff; text-shadow:0 8px 24px rgba(0,0,0,0.6); }
 .overlay-sub{ margin:0; color:rgba(255,255,255,0.9); font-size:13px }
 .progressbar{ width:320px; height:8px; background:rgba(255,255,255,0.035); border-radius:8px; overflow:hidden; }
-.progress{ height:100%; width:0; background: linear-gradient(90deg, #ffd86b, #d4b14a); transition: width 200ms linear; }
+.progress{ height:100%; width:0; background: linear-gradient(90deg, #002666, #002666); transition: width 200ms linear; }
 .hint{ margin-top:6px; color:rgba(255,255,255,0.62); font-size:12px }
 
 /* lightbox */
@@ -462,20 +462,15 @@ body.lightbox-open{ overflow:hidden; }
   :root{ --plank-width: 80px; }
 }
 
-.topbar{
-  background: linear-gradient(180deg, #002666, rgb(0, 0, 0));
-  padding:10px 18px;
+.credits {
   position:fixed;
-  left:0;right:0;top:0;
-  z-index:999;
-  box-shadow:0 6px 18px rgba(0,0,0,0.6);
+  right:16px;
+  bottom:16px;
+  font-size:12px;
+  color:#ffffff;
+  background: rgba(255, 255, 255, 0);
+  padding:8px 10px;
+  border-radius:8px;
+  pointer-events:none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:10px}
-.nav-btn{
-  display:inline-block;padding:8px 12px;border-radius:8px;background:transparent;color:#fff;text-decoration:none;font-weight:600;
-  border:1px solid rgba(255, 255, 255, 0);
-}
-.nav-btn:hover{background:rgba(255,255,255,0.02)}
-
-body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#ffffff00;background:var(--bg)}
-.wrap{min-height:100vh;display:flex;flex-direction:column;gap:18px;padding:88px 22px 40px}

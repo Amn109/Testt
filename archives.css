@@ -40,7 +40,7 @@ html,body { height:100%; margin:0; padding:0; font-family: "Inter", system-ui, -
   right:16px;
   bottom:16px;
   font-size:12px;
-  color:#000000;
+  color:#ffffff;
   background: rgba(255, 255, 255, 0);
   padding:8px 10px;
   border-radius:8px;
@@ -137,20 +137,3 @@ body.cursor-pointer { cursor: pointer; }
   .viewer-shell{ width:94vw; height:92vh; }
 }
 
-.topbar{
-  background: linear-gradient(180deg, #002666, rgba(0,0,0,0.15));
-  padding:10px 18px;
-  position:fixed;
-  left:0;right:0;top:0;
-  z-index:999;
-  box-shadow:0 6px 18px rgba(0,0,0,0.6);
-}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:10px}
-.nav-btn{
-  display:inline-block;padding:8px 12px;border-radius:8px;background:transparent;color:#fff;text-decoration:none;font-weight:600;
-  border:1px solid rgba(255,255,255,0.04);
-}
-.nav-btn:hover{background:rgba(255,255,255,0.02)}
-
-body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#fff;background:var(--bg)}
-.wrap{min-height:100vh;display:flex;flex-direction:column;gap:18px;padding:88px 22px 40px}

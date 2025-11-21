@@ -248,10 +248,10 @@
   }
 
   // create top-left nav buttons (Accueil & Chronologie)
-  function createNavButtons({ accueilHref = 'index.html', chronoHref = 'chronologie.html' } = {}){
+  function createNavButtons({ accueilHref = '', chronoHref = '' } = {}){
     if(navButtonsContainer) return;
     navButtonsContainer = document.createElement('div');
-    navButtonsContainer.className = 'nav-buttons';
+    navButtonsContainer.className = '';
     const btnHome = document.createElement('button');
     btnHome.className = 'nav-btn';
     btnHome.setAttribute('aria-label','Aller à l\'accueil');

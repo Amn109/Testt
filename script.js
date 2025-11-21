@@ -1,5 +1,7 @@
-// script.js - robust painting textures: local -> remote (crossOrigin) -> embedded fallback
-// Requires three r0.146.0 + OrbitControls + gsap (déjà inclus dans ton HTML)
+// script.js — version finale : deux cadres modernes (URLs fournies) + correction flip vertical
+// Debug : (fichier uploadé si besoin)
+const UPLOADED_FILE = '/mnt/data/55a7609c-ed88-4d91-86d8-fae69a998f0b.png';
+console.log('Uploaded local file (debug):', UPLOADED_FILE);
 
 (function(){
   const canvas = document.getElementById('museum-canvas');
@@ -109,14 +111,8 @@
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><rect width='100%' height='100%' fill='${color}'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Georgia, serif' font-size='80' fill='#ffffff' opacity='0.95'>${label}</text></svg>`;
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
-  const embeddedImages = [
-    svgDataURL('#b85c4b','Image 1'),
-    svgDataURL('#4b79b8','Image 2'),
-    svgDataURL('#6abf69','Image 3'),
-    svgDataURL('#d9a94b','Image 4')
-  ];
 
-  // robust image loader using HTMLImageElement (allows crossOrigin)
+  // robust image loader: try local -> remote -> embedded
   function tryLoadTextureSequence(localUrl, remoteUrl, embedUrl, onSuccess, onFail){
     const maxAniso = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 1;
 
@@ -124,7 +120,7 @@
       const tex = new THREE.Texture(img);
       tex.needsUpdate = true;
       tex.encoding = THREE.sRGBEncoding;
-      tex.flipY = false; // plane UVs work better with flipY=false when using Image -> Texture
+      tex.flipY = false;
       tex.wrapS = THREE.ClampToEdgeWrapping;
       tex.wrapT = THREE.ClampToEdgeWrapping;
       tex.anisotropy = maxAniso;
@@ -133,202 +129,124 @@
       return tex;
     }
 
-    // 1) try local (file:// or relative path)
+    // 1) try local
     if(localUrl){
       const imgLocal = new Image();
-      imgLocal.onload = () => {
-        const tx = makeTextureFromImage(imgLocal);
-        console.log('Loaded LOCAL image:', localUrl);
-        onSuccess(tx);
-      };
-      imgLocal.onerror = () => {
-        // try remote next
-        tryRemote();
-      };
-      // for local file:// the browser will often allow loading the file when src points to relative path
+      imgLocal.onload = () => { try { onSuccess(makeTextureFromImage(imgLocal)); return; } catch(e) { /* continue */ } };
+      imgLocal.onerror = () => { /* continue to remote */ };
       imgLocal.src = localUrl;
+      // short delay to allow local load; then try remote if nothing succeeded
+      setTimeout(() => { tryRemote(); }, 500);
       return;
     } else {
       tryRemote();
     }
 
-    // remote attempt with crossOrigin
     function tryRemote(){
       if(!remoteUrl){
-        // go to embed directly
         useEmbed();
         return;
       }
       const imgRem = new Image();
       imgRem.crossOrigin = 'anonymous';
-      imgRem.onload = () => {
-        const tx = makeTextureFromImage(imgRem);
-        console.log('Loaded REMOTE image:', remoteUrl);
-        onSuccess(tx);
-      };
-      imgRem.onerror = () => {
-        useEmbed();
-      };
+      imgRem.onload = () => { onSuccess(makeTextureFromImage(imgRem)); };
+      imgRem.onerror = () => { useEmbed(); };
       imgRem.src = remoteUrl;
     }
 
     function useEmbed(){
+      if(!embedUrl) { if(onFail) onFail(); return; }
       const imgE = new Image();
-      imgE.onload = () => {
-        const tx = makeTextureFromImage(imgE);
-        console.log('Using EMBEDDED fallback texture');
-        onSuccess(tx);
-      };
-      imgE.onerror = () => {
-        console.error('All attempts failed for', localUrl, remoteUrl);
-        if(onFail) onFail();
-      };
+      imgE.onload = () => { onSuccess(makeTextureFromImage(imgE)); };
+      imgE.onerror = () => { if(onFail) onFail(); };
       imgE.src = embedUrl;
     }
   }
 
-  // ---------- PAINTINGS (BACK WALL) - plaqués sur mur ----------
-  const backZ = -6.65; // légèrement devant la face du mur
-  const paintingData = [
-    { pos: [-6.5, 2.15, backZ], size: [2.2, 1.6], local:'./images/1.jpg', remote:'https://upload.wikimedia.org/wikipedia/commons/3/31/Antoine_Watteau_-_Embarkation_for_Cythera.jpg', embed: embeddedImages[0] },
-    { pos: [-2.2, 2.15, backZ], size: [1.8, 1.3], local:'./images/2.jpg', remote:'https://upload.wikimedia.org/wikipedia/commons/2/24/Jean-Honor%C3%A9_Fragonard_-_The_Swing.jpg', embed: embeddedImages[1] },
-    { pos: [2.2, 2.15, backZ], size: [1.8, 1.3], local:'./images/3.jpg', remote:'https://upload.wikimedia.org/wikipedia/commons/1/1b/%27The_Birth_of_Venus%27_by_Sandro_Botticelli_%281448-1486%29.jpg', embed: embeddedImages[2] },
-    { pos: [6.5, 2.15, backZ], size: [2.2, 1.6], local:'./images/4.jpg', remote:'https://upload.wikimedia.org/wikipedia/commons/6/62/Carl_Henning_Pedersen_-_art.jpg', embed: embeddedImages[3] }
-  ];
+  // ---------- PAINTINGS : only two modern frames near the door ----------
+  const backZ = -6.65;
 
-  // helper : ajouter plaque texte sous un plane (tableau)
-  function addPlaque(targetPlane, text){
-    const c = document.createElement('canvas'); c.width = 512; c.height = 128;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#faf7f2'; ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle = '#222'; ctx.font = '20px Georgia'; ctx.textAlign = 'center';
-    ctx.fillText(text, c.width/2, c.height/2 + 8);
-    const tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
-    const mat = new THREE.MeshBasicMaterial({ map: tex });
-    const w = Math.min(1.6, targetPlane.geometry.parameters.width * 0.75);
-    const h = 0.12 * (w / 1.6);
-    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
-    plaque.position.set(targetPlane.position.x, targetPlane.position.y - (targetPlane.geometry.parameters.height/2) - (h/2) - 0.08, targetPlane.position.z + 0.02);
-    plaque.rotation.copy(targetPlane.rotation);
-    scene.add(plaque);
-    return plaque;
-  }
+  // user-provided images (the two links you sent)
+  const LEFT_IMAGE  = 'https://images.ladepeche.fr/api/v1/images/view/5dbeea6fd286c24066448ac5/full/image.jpg?v=1';
+  const RIGHT_IMAGE = 'https://scontent-cdg4-1.xx.fbcdn.net/v/t1.6435-9/75481668_2380575275524888_1200117637502205952_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=lb9Tt1Q_bIIQ7kNvwHwMPO7&_nc_oc=AdnqqYI3WEGb9PsyQ2G8C1vfGRsUc2sH9LAinn_VqcuGGfzbfHs4PYWjCZgghb9duPfIdFoideboftjiT7M9PNJF&_nc_zt=23&_nc_ht=scontent-cdg4-1.xx&_nc_gid=hZ7zwiamYByiPQOeOfBurQ&oh=00_AfjYPkek3WTCKgbqKbmz15yoo3PgCeCONB6L3wGBYWSDHQ&oe=69486BEC';
 
-  function createPainting(p, idx){
-    // placeholder canvas texture while loading
-    const placeholderCanvas = document.createElement('canvas'); placeholderCanvas.width = 800; placeholderCanvas.height = 600;
-    const ctx = placeholderCanvas.getContext('2d'); ctx.fillStyle = '#efe7df'; ctx.fillRect(0,0,800,600);
-    ctx.fillStyle='#c9b9a3'; ctx.font='28px Georgia'; ctx.textAlign='center'; ctx.fillText('Chargement image...',400,320);
-    const canvasTexPlaceholder = new THREE.CanvasTexture(placeholderCanvas);
-    canvasTexPlaceholder.encoding = THREE.sRGBEncoding;
-    canvasTexPlaceholder.needsUpdate = true;
-
-    // material uses placeholder until the real texture is loaded
-    const matCanvas = new THREE.MeshStandardMaterial({ map: canvasTexPlaceholder, roughness: 0.7 });
-
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(p.size[0], p.size[1]), matCanvas);
-    plane.position.set(p.pos[0], p.pos[1], p.pos[2] + 0.02);
-    plane.rotation.y = 0;
-    scene.add(plane);
-
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(p.size[0]+0.14, p.size[1]+0.14, 0.08),
-      new THREE.MeshStandardMaterial({ color: 0x93601b, metalness: 0.9, roughness: 0.2 }));
-    frame.position.copy(plane.position);
-    frame.rotation.copy(plane.rotation);
-    frame.position.z -= 0.03; scene.add(frame);
-
-    // spotlight
-    const sp = new THREE.SpotLight(0xfff6e8, 1.2, 8, Math.PI/14, 0.6);
-    sp.position.set(p.pos[0], p.pos[1] + 1.6, p.pos[2] + 1.3);
-    sp.target = plane; scene.add(sp); scene.add(sp.target);
-
-    // load texture robustly
-    tryLoadTextureSequence(p.local, p.remote, p.embed, (tx) => {
-      // ensure texture params
-      tx.wrapS = tx.wrapT = THREE.ClampToEdgeWrapping;
-      tx.minFilter = THREE.LinearMipmapLinearFilter;
-      tx.encoding = THREE.sRGBEncoding;
-      tx.anisotropy = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 1;
-      tx.needsUpdate = true;
-
-      // replace material's map and update
-      matCanvas.map = tx;
-      matCanvas.needsUpdate = true;
-
-      // add plaque with generic title
-      addPlaque(plane, `Œuvre ${idx+1}`);
-    }, () => {
-      console.warn('Texture failed for painting', idx);
-      addPlaque(plane, `Œuvre ${idx+1} (image indisponible)`);
-    });
-  }
-  paintingData.forEach((p,i)=>createPainting(p,i));
-
-  // ---------- SIDE WALL PAINTINGS ----------
-  const userImageA = 'https://www.osr.ch/fileadmin/_processed_/7/c/csm_CharlieChaplinJeune__c_RoyExportSAS_3d7e016691.jpg';
-  const userImageB = 'https://wl-sympa.cf.tsp.li/resize/728x/jpg/fec/bd8/609eda588486cabdba47273f9d.jpg';
-
-  const leftWallPaintings = [
-    { x: -9.7, y: 2.15, z: -4.5,   w: 1.6, h: 1.1, local: './images/left1.jpg', remote: userImageA, embed: svgDataURL('#8c6b58','Chaplin') },
-    { x: -9.7, y: 2.15, z: 0.0,    w: 1.8, h: 1.2, local: './images/left2.jpg', remote: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Claude_Monet_-_Impression%2C_soleil_levant.jpg', embed: svgDataURL('#6e8fb8','Monet') },
-    { x: -9.7, y: 2.15, z: 4.5,    w: 1.6, h: 1.1, local: './images/left3.jpg', remote: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg', embed: svgDataURL('#324a6b','VanGogh') }
-  ];
-
-  const rightWallPaintings = [
-    { x: 9.7, y: 2.15, z: -4.5,   w: 1.6, h: 1.1, local: './images/right1.jpg', remote: userImageB, embed: svgDataURL('#4b5f7a','Portrait') },
-    { x: 9.7, y: 2.15, z: 0.0,    w: 1.8, h: 1.2, local: './images/right2.jpg', remote: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Masterpiece.jpg', embed: svgDataURL('#7a5b3a','Master') },
-    { x: 9.7, y: 2.15, z: 4.5,    w: 1.6, h: 1.1, local: './images/right3.jpg', remote: 'https://upload.wikimedia.org/wikipedia/commons/8/80/Pierre-Auguste_Renoir_-_Luncheon_of_the_Boating_Party.jpg', embed: svgDataURL('#b87a46','Renoir') }
-  ];
-
-  function createWallPainting(entry, side, idx){
-    const placeholder = document.createElement('canvas'); placeholder.width = 800; placeholder.height = 600;
-    const ctx = placeholder.getContext('2d'); ctx.fillStyle = '#efe7df'; ctx.fillRect(0,0,800,600);
-    ctx.fillStyle='#c9b9a3'; ctx.font='24px Georgia'; ctx.textAlign='center'; ctx.fillText('Chargement...',400,320);
-    const placeholderTex = new THREE.CanvasTexture(placeholder);
+  // createModernFrame(localUrl|null, remoteUrl, positionVec3, size, title, flipVertical)
+  function createModernFrame(localUrl, remoteUrl, positionVec3, size = [1.8, 1.3], title = '', flipVertical = false) {
+    const placeholderCanvas = document.createElement('canvas'); placeholderCanvas.width = 800; placeholderCanvas.height = 540;
+    const pctx = placeholderCanvas.getContext('2d');
+    pctx.fillStyle = '#e6e6e6'; pctx.fillRect(0,0,placeholderCanvas.width, placeholderCanvas.height);
+    pctx.fillStyle = '#666'; pctx.font = '26px Georgia'; pctx.textAlign = 'center';
+    pctx.fillText('Chargement...', placeholderCanvas.width/2, placeholderCanvas.height/2);
+    const placeholderTex = new THREE.CanvasTexture(placeholderCanvas);
     placeholderTex.encoding = THREE.sRGBEncoding;
     placeholderTex.needsUpdate = true;
 
-    const mat = new THREE.MeshStandardMaterial({ map: placeholderTex, roughness: 0.7 });
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(entry.w, entry.h), mat);
-    plane.position.set(entry.x + (side==='left' ? 0.05 : -0.05), entry.y, entry.z);
-    plane.rotation.y = (side === 'left') ? Math.PI/2 : -Math.PI/2;
+    const imgMat = new THREE.MeshStandardMaterial({ map: placeholderTex, roughness: 0.5 });
+    imgMat.polygonOffset = true; imgMat.polygonOffsetFactor = -0.6; imgMat.polygonOffsetUnits = -1;
+
+    const w = size[0], h = size[1];
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), imgMat);
+    plane.position.set(positionVec3.x, positionVec3.y, positionVec3.z + 0.02);
+    // flip vertically at geometry level when requested
+    plane.scale.y = flipVertical ? -1 : 1;
     scene.add(plane);
 
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(entry.w + 0.12, entry.h + 0.12, 0.06),
-      new THREE.MeshStandardMaterial({ color: 0x7b4f23, metalness: 0.85, roughness: 0.25 }));
-    frame.position.copy(plane.position);
-    frame.rotation.copy(plane.rotation);
-    frame.position.z -= (plane.rotation.y === 0 ? 0.03 : (plane.rotation.y > 0 ? 0.02 : -0.02));
-    scene.add(frame);
+    // modern frame parts
+    const frameDepth = 0.06;
+    const outerW = w + 0.12, outerH = h + 0.12;
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.18 });
+    frameMat.polygonOffset = true; frameMat.polygonOffsetFactor = -0.7; frameMat.polygonOffsetUnits = -2;
 
-    const sp = new THREE.SpotLight(0xfff7e8, 1.1, 6, Math.PI/12, 0.6);
-    const lightX = entry.x + (side === 'left' ? 1.2 : -1.2);
-    sp.position.set(lightX, entry.y + 1.5, entry.z);
-    sp.target = plane; scene.add(sp); scene.add(sp.target);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(outerW, 0.06, frameDepth), frameMat);
+    top.position.set(positionVec3.x, positionVec3.y + (h/2) + 0.03, positionVec3.z - 0.02); scene.add(top);
+    const bottom = top.clone(); bottom.position.set(positionVec3.x, positionVec3.y - (h/2) - 0.03, positionVec3.z - 0.02); scene.add(bottom);
+    const left = new THREE.Mesh(new THREE.BoxGeometry(0.06, h, frameDepth), frameMat);
+    left.position.set(positionVec3.x - (w/2) - 0.03, positionVec3.y, positionVec3.z - 0.02); scene.add(left);
+    const right = left.clone(); right.position.set(positionVec3.x + (w/2) + 0.03, positionVec3.y, positionVec3.z - 0.02); scene.add(right);
 
-    tryLoadTextureSequence(entry.local || './images/missing.jpg', entry.remote, entry.embed, (tx) => {
+    // inner bevel
+    const bevelMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.6, roughness: 0.25 });
+    const innerTop = new THREE.Mesh(new THREE.BoxGeometry(w - 0.06, 0.02, frameDepth + 0.002), bevelMat);
+    innerTop.position.set(positionVec3.x, positionVec3.y + (h/2) + 0.01, positionVec3.z - 0.021); scene.add(innerTop);
+
+    if (title) {
+      const pc = document.createElement('canvas'); pc.width = 512; pc.height = 64;
+      const pct = pc.getContext('2d');
+      pct.fillStyle = '#faf7f2'; pct.fillRect(0,0,pc.width,pc.height);
+      pct.fillStyle = '#222'; pct.font = '18px Georgia'; pct.textAlign = 'center';
+      pct.fillText(title, pc.width/2, pc.height/2 + 6);
+      const ptex = new THREE.CanvasTexture(pc);
+      const plaque = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(1.2, w*0.8), 0.08), new THREE.MeshBasicMaterial({ map: ptex }));
+      plaque.position.set(positionVec3.x, positionVec3.y - (h/2) - 0.10, positionVec3.z + 0.02);
+      scene.add(plaque);
+    }
+
+    // load texture (try local first if provided, then remote, then embed)
+    tryLoadTextureSequence(localUrl, remoteUrl, svgDataURL('#666','Image'), (tx) => {
       tx.wrapS = tx.wrapT = THREE.ClampToEdgeWrapping;
       tx.minFilter = THREE.LinearMipmapLinearFilter;
       tx.encoding = THREE.sRGBEncoding;
       tx.anisotropy = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 1;
       tx.needsUpdate = true;
-      mat.map = tx; mat.needsUpdate = true;
-      addPlaque(plane, `Œuvre mur ${side} ${idx+1}`);
+      imgMat.map = tx;
+      imgMat.needsUpdate = true;
     }, () => {
-      addPlaque(plane, `Œuvre mur ${side} ${idx+1} (image indisponible)`);
+      console.warn('Failed to load image for', remoteUrl);
     });
+
+    return { plane, parts: [top,bottom,left,right] };
   }
 
-  leftWallPaintings.forEach((p,i) => createWallPainting(p,'left',i));
-  rightWallPaintings.forEach((p,i) => createWallPainting(p,'right',i));
+  // create two frames near the door — both flipped vertically to correct upside-down display
+  createModernFrame(null, LEFT_IMAGE,  new THREE.Vector3(-2.2, 2.15, backZ), [1.8, 1.3], 'Louis Lareng — (A)', true);
+  createModernFrame(null, RIGHT_IMAGE, new THREE.Vector3( 2.2, 2.15, backZ), [1.8, 1.3], 'Louis Lareng — (B)', true);
 
-  // ---------- DOOR 3D (placée devant le mur + contraste) ----------
+  // ---------- DOOR 3D (unchanged) ----------
   const doorWidth = 1.6;
   const doorHeight = 2.4;
   const doorThickness = 0.12;
-  const hingeOnLeft = true; // change à false pour hinge droite
+  const hingeOnLeft = true;
 
-  // calculs de placement (back wall face ~ -6.7)
   const backWallFrontZ = -6.7;
   const doorCenterZ = backWallFrontZ + 0.06;
   const doorCenterY = 1.2;
@@ -339,7 +257,6 @@
   doorPivot.position.set(hingeWorldX, doorCenterY, doorCenterZ);
   scene.add(doorPivot);
 
-  // door texture (contraste plus fort)
   const doorCanvas = document.createElement('canvas'); doorCanvas.width = 512; doorCanvas.height = 1024;
   const dctx = doorCanvas.getContext('2d');
   dctx.fillStyle = '#4a2e1b'; dctx.fillRect(0,0,512,1024);
@@ -353,7 +270,6 @@
   doorMesh.position.set( hingeOnLeft ? doorWidth/2 : -doorWidth/2, 0, 0 );
   doorPivot.add(doorMesh);
 
-  // frame + rim
   const frameThickness = 0.14;
   const frameDepth = 0.18;
   const frameMat = new THREE.MeshStandardMaterial({ color:0x2f1f14, roughness:0.45, metalness:0.08 });
@@ -365,7 +281,6 @@
   rim.position.set(0, doorCenterY, doorCenterZ + 0.07);
   scene.add(rim);
 
-  // knob + plate + glass inset
   const knobMat = new THREE.MeshStandardMaterial({ color:0xd4af37, metalness:0.98, roughness:0.18 });
   const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.02,24), knobMat);
   knob.rotation.z = Math.PI/2;
@@ -380,12 +295,10 @@
   glass.position.set(hingeOnLeft ? doorWidth/4 : -doorWidth/4, 0.18, doorThickness/2 + 0.03);
   doorPivot.add(glass);
 
-  // subtle inner light to show depth when open
   const innerLight = new THREE.PointLight(0xfff3d6, 0.28, 14, 2);
   innerLight.position.set(0, 1.6, doorCenterZ - 2.0);
   scene.add(innerLight);
 
-  // add a sign above the door
   const signCanvas = document.createElement('canvas'); signCanvas.width=512; signCanvas.height=120;
   const sctx = signCanvas.getContext('2d');
   sctx.fillStyle = '#222'; sctx.fillRect(0,0,512,120);
@@ -397,14 +310,10 @@
   sign.position.set(0, doorCenterY + 1.3, doorCenterZ + 0.06);
   scene.add(sign);
 
-  // interactive set (doorMesh & seat)
   const interactiveObjects = [doorMesh, seat, knob];
 
-  // door state & animation flags
   let doorOpen = false;
   let isAnimating = false;
-
-  // navigation config (ouvre la porte puis navigue vers multimedia.html)
   let navigateAfterOpen = true;
   const targetPage = 'galerie.html';
 
@@ -450,7 +359,6 @@
     }
   }
 
-  // ---------- GLOBAL LIGHT TWEAKS / RIM ----------
   scene.traverse(obj => {
     if (obj.isSpotLight) {
       obj.intensity = Math.max(0.9, (obj.intensity || 1) * 1.05);
@@ -468,7 +376,6 @@
   scene.add(rimLightLeft);
   const rimLightRight = rimLightLeft.clone(); rimLightRight.position.x = 2.6; scene.add(rimLightRight);
 
-  // ---------- pointer / raycast + interactions ----------
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   let hovering = false;
@@ -482,7 +389,6 @@
   });
   window.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') toggleDoor(); });
 
-  // ---------- chandeliers (small lamps) ----------
   for (let i=-1;i<=1;i++){
     const lampMat = new THREE.MeshStandardMaterial({ emissive: 0xfff7e0, emissiveIntensity: 0.18, color: 0xfffff0, roughness: 0.8 });
     const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.13, 24, 24), lampMat);
@@ -490,7 +396,6 @@
     const pl = new THREE.PointLight(0xfffbf0, 0.35, 6, 2); pl.position.set(lamp.position.x, 3.6, lamp.position.z); scene.add(pl);
   }
 
-  // ---------- animate ----------
   const clock = new THREE.Clock();
   function animate(){
     requestAnimationFrame(animate);
@@ -516,10 +421,8 @@
   }
   animate();
 
-  // cinematic entrance
   camera.position.set(0,1.0,14);
   gsap.to(camera.position, { x:0, y:1.6, z:8, duration:1.6, ease:"power3.out", onUpdate: ()=>{ camera.lookAt(0,1.4,-1.5); }});
 
-  console.log('script.js chargé — images des tableaux : tentative local → remote → embedded. Door Z:', doorCenterZ);
+  console.log('script.js chargé — cadres créés et flip vertical appliqué.');
 })();
-

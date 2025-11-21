@@ -7,12 +7,7 @@
   <link rel="stylesheet" href="chronologie.css">
 </head>
 <body>
-  <nav class="topbar">
-    <div class="nav-inner">
-      <a class="nav-btn" href="index.html">Accueil</a>
-      <a class="nav-btn" href="media.html">Media</a>
-    </div>
-  </nav>
+ 
 
   <main class="stage">
     <h2 class="page-title">Chronologie interactive — Vue Mur 3D</h2>
@@ -42,9 +37,25 @@
       </div>
     </aside>
   </main>
-<div class="credits">Crée par l'UNSC
+<div class="credits">UNSC
   <img src="https://cdn.helloasso.com/img/logos/croppedimage-2b0858ea35264299ad7d65fc4830286e.png" alt="">
 </div>
+<!-- Frise chronologique (repère de pages) -->
+<nav id="siteTimeline" class="site-timeline" aria-label="Repère de navigation du site">
+  <ol class="timeline-list">
+    <li><a href="index.html" data-title="Accueil" data-key="index.html" aria-label="Accueil" tabindex="0"></a></li>
+    <li><a href="galerie.html" data-title="Galerie" data-key="galerie.html" aria-label="Galerie" tabindex="0"></a></li>
+    <li><a href="biographie.html" data-title="Biographie" data-key="biographie.html" aria-label="Biographie" tabindex="0"></a></li>
+    <li><a href="chronologie.html" data-title="Chronologie" data-key="chronologie.html" aria-label="Chronologie" tabindex="0"></a></li>
+    <li><a href="archives.html" data-title="Archives" data-key="archives.html" aria-label="Archives" tabindex="0"></a></li>
+    <li><a href="media.html" data-title="Médias" data-key="media.html" aria-label="Médias" tabindex="0"></a></li>
+  </ol>
+</nav>
+
+<!-- inclure les fichiers CSS/JS (si tu les as nommés ainsi) -->
+<link rel="stylesheet" href="frise.css">
+<script src="frise.js" defer></script>
+
   <script src="chronologie.js" defer></script>
 </body>
 </html>
